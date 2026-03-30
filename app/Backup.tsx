@@ -263,19 +263,6 @@ export default function Home({
       return null
     }
   }
-  
-    const formatFecha = (fecha: string) => {
-    return new Date(fecha + 'T00:00:00').toLocaleDateString('es-AR', {
-      day: 'numeric',
-      month: 'long'
-    })
-  }
-
-    const formatDestino = (destino: string) => {
-      return destino
-        .replace(/-/g, ' ')
-        .replace(/\b\w/g, (l) => l.toUpperCase())
-    }
 
 const getDetalles = (oferta: Oferta | null) => {
   if (!oferta) return null
@@ -428,7 +415,7 @@ const getDetalles = (oferta: Oferta | null) => {
                         onError={(e) => {
                           (e.currentTarget as HTMLImageElement).src = 'https://placehold.co/100x100'
                         }}
-                        className="block w-full h-full object-cover rounded-l-3xl min-h-full"
+                        className="block w-full h-full object-cover rounded-l-2xl min-h-full"
                         alt={oferta.hotel}
                       />
                     </div>
@@ -446,7 +433,7 @@ const getDetalles = (oferta: Oferta | null) => {
                           ))}
                         </div>
                       )}
-                      <h3 className="text-2xl font-semibold text-[#0F3B4C]">{oferta.hotel}</h3>
+                      <h3 className="text-xl font-semibold text-[#0F3B4C]">{oferta.hotel}</h3>
                       <p className="text-base text-gray-500 mt-0">
                         {getNoches(oferta.fecha_in, oferta.fecha_out)} noches · {oferta.regimen || 'All inclusive'}
                       </p>
@@ -503,7 +490,7 @@ const getDetalles = (oferta: Oferta | null) => {
         <div className="border rounded-2xl px-5 py-4 bg-gray-50">
 
           {/* LABEL */}
-          <p className="text-base font-semibold text-[#0F6E56] mb-3">IDA</p>
+          <p className="text-xs font-semibold text-[#0F6E56] mb-3">IDA</p>
 
           {/* ROW */}
           <div className="flex items-center w-full h-[40px]">
@@ -545,7 +532,7 @@ const getDetalles = (oferta: Oferta | null) => {
 
           {/* TAGS */}
             <div className="flex gap-2 mt-4">
-              <span className="text-sm px-3 py-1 rounded-full bg-[#E6F1FB] text-[#185FA5]">
+              <span className="text-xs px-3 py-1 rounded-full bg-[#E6F1FB] text-[#185FA5]">
                 {detalles.vuelo.vueltaInfo}
               </span>
 
@@ -567,7 +554,7 @@ const getDetalles = (oferta: Oferta | null) => {
         <div className="border rounded-2xl px-5 py-4 bg-gray-50">
 
           {/* LABEL */}
-          <p className="text-base font-semibold text-[#185FA5] mb-3">VUELTA</p>
+          <p className="text-xs font-semibold text-[#185FA5] mb-3">VUELTA</p>
 
           {/* ROW */}
               <div className="flex items-center w-full h-[40px]">
@@ -608,7 +595,7 @@ const getDetalles = (oferta: Oferta | null) => {
               </div>
           {/* TAGS */}
           <div className="flex gap-2 mt-4">
-            <span className="text-sm px-3 py-1 rounded-full bg-[#E6F1FB] text-[#185FA5]">
+            <span className="text-xs px-3 py-1 rounded-full bg-[#E6F1FB] text-[#185FA5]">
               {detalles.vuelo.vueltaInfo}
             </span>
 
@@ -666,18 +653,7 @@ const getDetalles = (oferta: Oferta | null) => {
             </div>
             <div className="text-right">
               <a
-               href={`https://wa.me/5493516678823?text=${encodeURIComponent(
-`Hola! Me interesa este paquete:
-
-• Destino: ${formatDestino(hotelSeleccionado.destino)}
-• Hotel: ${hotelSeleccionado.hotel}
-• Fecha: ${formatFecha(fechaSeleccionada?.fecha_inicio || '')} al ${formatFecha(fechaSeleccionada?.fecha_fin || '')}
-• Plan: ${tipoPlanSeleccionado}
-• Precio: USD ${hotelSeleccionado.precio} por persona
-
-• Quiero reservar, ¿me pasás más info?`
-)}`}
-
+                href={`https://wa.me/549XXXXXXXXXX?text=Hola! Me interesa este viaje a ${hotelSeleccionado.destino} en ${hotelSeleccionado.hotel}`}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center justify-center bg-[#0F3B4C] hover:bg-[#0c2f3d] text-white px-12 py-2 rounded-full text-lg font-semibold transition-all duration-200 hover:scale-[1.03] active:scale-[0.97] shadow-md hover:shadow-lg"
@@ -714,17 +690,7 @@ const getDetalles = (oferta: Oferta | null) => {
                   </p>
                 </div>
                 <a
-               href={`https://wa.me/5493516678823?text=${encodeURIComponent(
-`Hola! Me interesa este paquete:
-
-• Destino: ${formatDestino(hotelSeleccionado.destino)}
-• Hotel: ${hotelSeleccionado.hotel}
-• Fecha: ${formatFecha(fechaSeleccionada?.fecha_inicio || '')} al ${formatFecha(fechaSeleccionada?.fecha_fin || '')}
-• Plan: ${tipoPlanSeleccionado}
-• Precio: USD ${hotelSeleccionado.precio} por persona
-
-• Quiero reservar, ¿me pasás más info?`
-)}`}
+                  href={`https://wa.me/549XXXXXXXXXX?text=Hola! Quiero este paquete: ${hotelSeleccionado.hotel}`}
                   target="_blank"
                   rel="noreferrer"
                   className="bg-[#0f3b4c] hover:bg-[#0f3b4c] text-white px-6 py-3 rounded-full text-base font-semibold transition-all duration-200 hover:scale-[1.03] active:scale-[0.97] shadow-md hover:shadow-lg"
