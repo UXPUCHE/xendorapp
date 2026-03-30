@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, ChangeEvent } from 'react'
-import Home from '../page'
+import { useState, useEffect, ChangeEvent } from 'react'
+import Home from '@/app/components/home'
 import { supabase } from '@/lib/supabase'
 
 type TipoTramo = 'ida' | 'vuelta'
@@ -120,6 +120,26 @@ export default function Dashboard() {
   const [ofertaDraft, setOfertaDraft] = useState<Oferta>(initialState)
   const [uploading, setUploading] = useState(false)
 
+  // 🔐 USER
+  const [user, setUser] = useState<any>(null)
+
+  // 🔐 PROTECCIÓN
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (!data.user) {
+        window.location.href = '/login'
+      } else {
+        setUser(data.user)
+      }
+    })
+  }, [])
+
+  // 🚪 LOGOUT
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    window.location.href = '/login'
+  }
+
   const update = <K extends keyof Oferta>(field: K, value: Oferta[K]) => {
     setOfertaDraft(prev => ({ ...prev, [field]: value }))
   }
@@ -143,28 +163,33 @@ export default function Dashboard() {
     }))
   }
 
-  const guardarOferta = async () => {
+    const guardarOferta = async () => {
 
-    const { error } = await supabase.from('ofertas').insert([{
-      ...ofertaDraft,
-      badge: ofertaDraft.badge || null, // 👈 vuelve a incluirlo
-      destino: ofertaDraft.destino.toLowerCase().replace(/\s+/g, '-'),
-      external_id: crypto.randomUUID(),
-      status: 'publicado'
-    }])
+      const { data: { user } } = await supabase.auth.getUser()
 
-    if (error) {
-      console.error(error)
-      return alert('Error al guardar')
+      const { data, error } = await supabase.from('ofertas').insert([{
+        ...ofertaDraft,
+        created_by: user?.id, // ✅ ESTE ES EL FIX
+        badge: ofertaDraft.badge || null,
+        destino: ofertaDraft.destino.toLowerCase().replace(/\s+/g, '-'),
+        external_id: crypto.randomUUID(),
+        status: 'publicado'
+      }])
+
+      console.log('ERROR:', error)
+
+      if (error) {
+        alert(error.message)
+        return
+      }
+
+      alert('Guardado 🚀')
     }
-
-    alert('Guardado 🚀')
-  }
 
   const handleUpload = async (file: File) => {
     setUploading(true)
 
-    const ext = file.name.split('.').pop() // ✅ FIX
+    const ext = file.name.split('.').pop()
     const fileName = `ofertas/${crypto.randomUUID()}.${ext}`
 
     await supabase.storage.from('PCIMG').upload(fileName, file)
@@ -181,7 +206,22 @@ export default function Dashboard() {
       {/* LEFT */}
       <div className="p-10 space-y-8 overflow-auto max-w-2xl mx-auto">
 
-        <h2 className="text-2xl font-bold text-[#0f3b4c]">Configurador</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-[#0f3b4c]">Configurador</h2>
+
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-gray-500">
+              {user?.email}
+            </span>
+
+            <button
+              onClick={handleLogout}
+              className="text-sm bg-red-500 text-white px-3 py-1 rounded"
+            >
+              Salir
+            </button>
+          </div>
+        </div>
 
         <button onClick={guardarOferta} className="bg-[#0f3b4c] text-white px-4 py-2 rounded-lg hover:opacity-90 transition">
           Guardar oferta
@@ -221,7 +261,7 @@ export default function Dashboard() {
           {uploading && <p>Subiendo...</p>}
           {ofertaDraft.imagen && <img src={ofertaDraft.imagen} className="h-40 rounded-xl" />}
 
-          <div className="grid grid-cols-4 gap-4"> {/* ✅ FIX */}
+          <div className="grid grid-cols-4 gap-4">
             <Input label="Precio" placeholder="USD 1200" onChange={(e)=>update('precio',Number(e.target.value))} />
 
             <Select label="Base" onChange={(e)=>update('pax',e.target.value)}>
@@ -253,17 +293,8 @@ export default function Dashboard() {
         
         <Card title="Vuelos">
           <div className="grid grid-cols-2 gap-4">
-            <Input
-              label="Fecha inicio"
-              type="date"
-              onChange={(e) => update('fecha_in', e.target.value)}
-            />
-
-            <Input
-              label="Fecha fin"
-              type="date"
-              onChange={(e) => update('fecha_out', e.target.value)}
-            />
+            <Input label="Fecha inicio" type="date" onChange={(e) => update('fecha_in', e.target.value)} />
+            <Input label="Fecha fin" type="date" onChange={(e) => update('fecha_out', e.target.value)} />
           </div>
         </Card>
 

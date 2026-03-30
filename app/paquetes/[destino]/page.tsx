@@ -1,4 +1,4 @@
-import Home from '@/app/page'
+import Home from '@/app/components/home'
 
 export default async function Page({ params }: { params: Promise<{ destino: string }> }) {
   const { destino } = await params
