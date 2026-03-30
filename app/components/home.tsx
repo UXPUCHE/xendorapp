@@ -3,6 +3,11 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 
+type HomeProps = {
+  destino: string
+  overrideOfertas?: Oferta[]
+}
+
 interface Tramo {
   tipo: 'ida' | 'vuelta'
   origen: string
@@ -47,10 +52,9 @@ interface Fecha {
 export default function Home({
   destino,
   overrideOfertas,
-}: {
-  destino?: string
-  overrideOfertas?: Oferta[]
-}) {
+}: HomeProps)
+
+{
   const [ofertas, setOfertas] = useState<Oferta[]>([])
   const [fechaSeleccionada, setFechaSeleccionada] = useState<Fecha | null>(null)
   const [hotelSeleccionado, setHotelSeleccionado] = useState<Oferta | null>(null)
