@@ -3,12 +3,15 @@
 import { createRoot } from 'react-dom/client'
 import Home from '@/app/components/Home'
 
-export function mountXendor(containerId: string, destino: string) {
-  const el = document.getElementById(containerId)
-
+function mount() {
+  const el = document.getElementById('xendor-root')
   if (!el) return
 
-  const root = createRoot(el)
+  const path = window.location.pathname
+  const slug = path.split('/').filter(Boolean).pop() || ''
 
-  root.render(<Home destino={destino} />)
+  const root = createRoot(el)
+  root.render(<Home destino={slug} />)
 }
+
+mount()
