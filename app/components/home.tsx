@@ -112,10 +112,16 @@ export default function Home({
 
 
       const normalizar = (str: string) =>
-        str?.toLowerCase().replace(/\s+/g, '-')
+        str
+          ?.toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "") // saca acentos
+          .replace(/\s+/g, '-') // espacios → guiones
+          .trim()
 
       const ofertasFiltradas = ((data as Oferta[]) || []).filter(
-        (o) => normalizar(o.destino) === normalizar(destino || '')
+        (o) =>
+          normalizar(o.destino).includes(normalizar(destino || ''))
       )
 
       setOfertas(ofertasFiltradas)
