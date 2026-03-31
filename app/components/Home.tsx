@@ -523,14 +523,32 @@ const getDetalles = (oferta: Oferta | null) => {
 
                 return (
                   
-                  <div
-                    key={oferta.external_id}
-                    onClick={() => setHotelSeleccionado(oferta)}
+                <div
+                  key={oferta.external_id}
+                  onClick={() => {
+                    setHotelSeleccionado(oferta)
+
+                    setTimeout(() => {
+                      const sticky = document.querySelector('[data-sticky]') as HTMLElement | null
+                      const stickyHeight = sticky?.offsetHeight || 0
+
+                      const height = document.body.scrollHeight + stickyHeight
+
+                      window.parent.postMessage(
+                        {
+                          type: "resize",
+                          height
+                        },
+                        "*"
+                      )
+                    }, 50)
+                  }}
                   className={`group cursor-pointer bg-white rounded-2xl pl-0 pr-4 py-0 flex gap-4 items-stretch min-h-[180px] transition-all duration-300 ease-out ${
                     isSelected
                       ? 'ring-2 ring-[#00A99D]/0 shadow-xl scale-[1.02]'
                       : 'shadow-md hover:shadow-xl hover:scale-[1.015]'
                   }`}
+                  
                   >
                     <div className="-ml-4 w-[260px] flex-shrink-0 self-stretch overflow-hidden rounded-l-2xl">
                       <img
