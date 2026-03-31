@@ -1,19 +1,22 @@
 'use client'
 
 import { useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import Home from '@/app/components/home'
 
 export default function RootPage() {
+  const searchParams = useSearchParams()
+  const destino = searchParams.get('destino') || ''
+
   useEffect(() => {
     const checkUser = async () => {
       const { data } = await supabase.auth.getUser()
 
-    const path = window.location.pathname
-    const params = new URLSearchParams(window.location.search)
-    const destino = params.get('destino')
+      const path = window.location.pathname
 
-    // 🔥 SI ES PÚBLICO → NO HACER NADA
-    if (path.includes('/paquetes') || destino) return
+      // 🔥 SI ES PÚBLICO → NO HACER NADA
+      if (path.includes('/paquetes') || destino) return
 
       // 🔒 SOLO PROTEGER DASHBOARD
       if (!data.user) {
@@ -22,7 +25,8 @@ export default function RootPage() {
     }
 
     checkUser()
-  }, [])
+  }, [destino])
 
-  return <div />
+  // 🔥 ACÁ ESTÁ LA CLAVE
+  return <Home destino={destino} />
 }
