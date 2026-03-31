@@ -8,10 +8,12 @@ export default function RootPage() {
     const checkUser = async () => {
       const { data } = await supabase.auth.getUser()
 
-      const path = window.location.pathname
+    const path = window.location.pathname
+    const params = new URLSearchParams(window.location.search)
+    const destino = params.get('destino')
 
-      // 🔥 SI ES UNA PÁGINA PÚBLICA → NO HACER NADA
-      if (path.includes('/paquetes')) return
+    // 🔥 SI ES PÚBLICO → NO HACER NADA
+    if (path.includes('/paquetes') || destino) return
 
       // 🔒 SOLO PROTEGER DASHBOARD
       if (!data.user) {
