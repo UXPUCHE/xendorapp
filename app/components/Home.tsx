@@ -182,29 +182,43 @@ export default function Home({
       o.pax?.toLowerCase() === tipoPlanSeleccionado.toLowerCase()
   )
 
-    useEffect(() => {
-        let precio = null
+useEffect(() => {
+  let precio = null
 
-        if (hotelSeleccionado) {
-          precio = hotelSeleccionado.precio
-        } else if (ofertasFiltradas.length > 0) {
-          precio = ofertasFiltradas[0].precio
-        }
+  if (hotelSeleccionado) {
+    precio = hotelSeleccionado.precio
+  } else if (ofertasFiltradas.length > 0) {
+    precio = ofertasFiltradas[0].precio
+  }
 
-        if (!precio) return
+  if (!precio) return
 
-        window.parent.postMessage(
-          {
-            type: "price_update",
-            payload: {
-              precio,
-              hotel: hotelSeleccionado?.hotel || ofertasFiltradas[0]?.hotel,
-              plan: tipoPlanSeleccionado,
-            }
-          },
-          "*"
-        )
-      }, [hotelSeleccionado, ofertasFiltradas, tipoPlanSeleccionado])
+  window.parent.postMessage(
+    {
+      type: "price_update",
+      payload: {
+        precio,
+        hotel: hotelSeleccionado?.hotel || ofertasFiltradas[0]?.hotel,
+        plan: tipoPlanSeleccionado,
+      }
+    },
+    "*"
+  )
+
+  // 🔥 FORZAR UPDATE DE ALTURA
+  setTimeout(() => {
+    const height = document.body.scrollHeight
+
+    window.parent.postMessage(
+      {
+        type: "resize",
+        height
+      },
+      "*"
+    )
+  }, 100)
+
+}, [hotelSeleccionado, ofertasFiltradas, tipoPlanSeleccionado])
 
 
   const fechas: Fecha[] = Array.from(
