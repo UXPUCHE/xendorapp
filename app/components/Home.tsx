@@ -107,7 +107,7 @@ export default function Home({
           sendHeight()
         })
 
-        observer.observe(document.body)
+        observer.observe(document.documentElement)
 
         sendHeight()
 
