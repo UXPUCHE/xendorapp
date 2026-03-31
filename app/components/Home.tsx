@@ -79,9 +79,9 @@ interface Fecha {
 export default function Home({
   destino,
   overrideOfertas,
-}: HomeProps)
+}: HomeProps) {
 
-{
+
   const [ofertas, setOfertas] = useState<Oferta[]>([])
   const [fechaSeleccionada, setFechaSeleccionada] = useState<Fecha | null>(null)
   const [hotelSeleccionado, setHotelSeleccionado] = useState<Oferta | null>(null)
@@ -118,6 +118,8 @@ export default function Home({
         return () => observer.disconnect()
       }, [])
 
+    
+
 
 
   // ⛔ ELIMINÁ COMPLETAMENTE el otro useEffect duplicado
@@ -137,30 +139,6 @@ export default function Home({
 
       return
     }
-
-          useEffect(() => {
-        let precio = null
-
-        if (hotelSeleccionado) {
-          precio = hotelSeleccionado.precio
-        } else if (ofertasFiltradas.length > 0) {
-          precio = ofertasFiltradas[0].precio
-        }
-
-        if (!precio) return
-
-        window.parent.postMessage(
-          {
-            type: "price_update",
-            payload: {
-              precio,
-              hotel: hotelSeleccionado?.hotel || ofertasFiltradas[0]?.hotel,
-              plan: tipoPlanSeleccionado,
-            }
-          },
-          "*"
-        )
-      }, [hotelSeleccionado, ofertasFiltradas, tipoPlanSeleccionado])
 
     const fetchData = async () => {
       const { data } = await supabase
@@ -196,6 +174,38 @@ export default function Home({
     fetchData()
   }, [destino, overrideOfertas])
 
+    const ofertasFiltradas = ofertas.filter(
+    (o) =>
+      fechaSeleccionada &&
+      o.fecha_in?.slice(0, 10) === fechaSeleccionada.fecha_inicio?.slice(0, 10) &&
+      o.fecha_out?.slice(0, 10) === fechaSeleccionada.fecha_fin?.slice(0, 10) &&
+      o.pax?.toLowerCase() === tipoPlanSeleccionado.toLowerCase()
+  )
+
+    useEffect(() => {
+        let precio = null
+
+        if (hotelSeleccionado) {
+          precio = hotelSeleccionado.precio
+        } else if (ofertasFiltradas.length > 0) {
+          precio = ofertasFiltradas[0].precio
+        }
+
+        if (!precio) return
+
+        window.parent.postMessage(
+          {
+            type: "price_update",
+            payload: {
+              precio,
+              hotel: hotelSeleccionado?.hotel || ofertasFiltradas[0]?.hotel,
+              plan: tipoPlanSeleccionado,
+            }
+          },
+          "*"
+        )
+      }, [hotelSeleccionado, ofertasFiltradas, tipoPlanSeleccionado])
+
 
   const fechas: Fecha[] = Array.from(
     new Map(
@@ -222,13 +232,6 @@ export default function Home({
     return [...new Set(planes)]
   }
 
-  const ofertasFiltradas = ofertas.filter(
-    (o) =>
-      fechaSeleccionada &&
-      o.fecha_in?.slice(0, 10) === fechaSeleccionada.fecha_inicio?.slice(0, 10) &&
-      o.fecha_out?.slice(0, 10) === fechaSeleccionada.fecha_fin?.slice(0, 10) &&
-      o.pax?.toLowerCase() === tipoPlanSeleccionado.toLowerCase()
-  )
 
   const preciosValidos = ofertasFiltradas
     .map((o) => o.precio)
