@@ -130,44 +130,31 @@ export default function Home({
   const [tipoPlanSeleccionado, setTipoPlanSeleccionado] = useState('Base doble')
 
 // 👇 NUEVO useEffect (PEGAR ACÁ)
-useEffect(() => {
-  const sendHeight = () => {
-    const body = document.body
-    const html = document.documentElement
+        useEffect(() => {
+          let lastHeight = 0
 
-    const height = Math.max(
-      body.scrollHeight,
-      body.offsetHeight,
-      html.clientHeight,
-      html.scrollHeight,
-      html.offsetHeight
-    )
+          const sendHeight = () => {
+            const height = document.documentElement.scrollHeight
 
-    const sticky = document.querySelector('[data-sticky]')
-    const stickyHeight = sticky ? sticky.clientHeight : 0
+            // 🚫 evita loops
+            if (Math.abs(height - lastHeight) < 50) return
 
-    const totalHeight = height + stickyHeight
+            lastHeight = height
 
-    window.parent.postMessage(
-      {
-        type: "resize",
-        height: totalHeight
-      },
-      "*"
-    )
-  }
+            window.parent.postMessage(
+              {
+                type: "resize",
+                height
+              },
+              "*"
+            )
+          }
 
-  const t1 = setTimeout(sendHeight, 200)
-  const t2 = setTimeout(sendHeight, 600)
-  const t3 = setTimeout(sendHeight, 1200)
+          const timeout = setTimeout(sendHeight, 300)
 
-  return () => {
-    clearTimeout(t1)
-    clearTimeout(t2)
-    clearTimeout(t3)
-  }
+          return () => clearTimeout(timeout)
 
-}, [hotelSeleccionado, fechaSeleccionada, tipoPlanSeleccionado])
+        }, [hotelSeleccionado, fechaSeleccionada, tipoPlanSeleccionado])
   
 
   useEffect(() => {
