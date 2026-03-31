@@ -866,9 +866,14 @@ const getDetalles = (oferta: Oferta | null) => {
 
 
 
-      {/* STICKY FOOTER */}
-      {hotelSeleccionado && (
-        <div data-sticky className="fixed bottom-0 left-0 w-full z-50 animate-slide-up">
+{/* ESPACIO PARA STICKY */}
+{hotelSeleccionado && (
+  <div style={{ height: '120px' }} />
+)}
+
+{/* STICKY FOOTER */}
+{hotelSeleccionado && (
+  <div data-sticky className="fixed bottom-0 left-0 w-full z-50 animate-slide-up">
           <div className="absolute -top-6 left-0 w-full h-6 bg-gradient-to-t from-white/60 to-transparent pointer-events-none" />
           <div className="backdrop-blur-md bg-white/85 border border-white/75 rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.15)]">
             <div className="max-w-5xl mx-auto px-4 py-5 md:py-6 flex items-center justify-between gap-6">
@@ -876,14 +881,14 @@ const getDetalles = (oferta: Oferta | null) => {
                 <p className="text-sm text-gray-500">
                   {destino} · {fechaSeleccionada?.fecha_inicio}
                 </p>
-                <p className="text-lg font-semibold text-[#0F3B4C]">{hotelSeleccionado.hotel}</p>
+                <p className="text-lg font-semibold text-[#0F3B4C]">{hotelSeleccionado?.hotel}</p>
                 <span className="text-base text-[#00A99D] font-semibold">✓ Seleccionado</span>
               </div>
               <div className="flex items-center gap-6 md:gap-10">
                 <div className="text-right flex flex-col items-end leading-tight">
                   <p className="text-sm text-gray-400 self-start">Desde</p>
                   <p className="text-2xl md:text-3xl font-extrabold text-[#0F3B4C] leading-none">
-                    USD {hotelSeleccionado.precio || '—'}
+                    USD {hotelSeleccionado?.precio || '—'}
                   </p>
                 </div>
                 <a
