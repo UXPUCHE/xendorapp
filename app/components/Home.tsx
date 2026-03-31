@@ -91,21 +91,17 @@ export default function Home({
       useEffect(() => {
         let lastHeight = 0
 
-        const sendHeight = () => {
-          const height = document.body.offsetHeight
+      const sendHeight = () => {
+        const height = document.documentElement.scrollHeight
 
-          if (Math.abs(height - lastHeight) < 10) return
-
-          lastHeight = height
-
-          window.parent.postMessage(
-            {
-              type: "resize",
-              height
-            },
-            "*"
-          )
-        }
+        window.parent.postMessage(
+          {
+            type: "resize",
+            height
+          },
+          "*"
+        )
+      }
 
         const observer = new ResizeObserver(() => {
           sendHeight()
