@@ -119,22 +119,6 @@ export default function Home({
       }, [])
 
 
-      useEffect(() => {
-  if (!hotelSeleccionado) return
-
-  window.parent.postMessage(
-    {
-      type: "price_update",
-      payload: {
-        precio: hotelSeleccionado.precio,
-        hotel: hotelSeleccionado.hotel,
-        plan: tipoPlanSeleccionado,
-      }
-    },
-    "*"
-  )
-}, [hotelSeleccionado, tipoPlanSeleccionado])
-
 
   // ⛔ ELIMINÁ COMPLETAMENTE el otro useEffect duplicado
 
@@ -153,6 +137,30 @@ export default function Home({
 
       return
     }
+
+          useEffect(() => {
+        let precio = null
+
+        if (hotelSeleccionado) {
+          precio = hotelSeleccionado.precio
+        } else if (ofertasFiltradas.length > 0) {
+          precio = ofertasFiltradas[0].precio
+        }
+
+        if (!precio) return
+
+        window.parent.postMessage(
+          {
+            type: "price_update",
+            payload: {
+              precio,
+              hotel: hotelSeleccionado?.hotel || ofertasFiltradas[0]?.hotel,
+              plan: tipoPlanSeleccionado,
+            }
+          },
+          "*"
+        )
+      }, [hotelSeleccionado, ofertasFiltradas, tipoPlanSeleccionado])
 
     const fetchData = async () => {
       const { data } = await supabase
