@@ -8,9 +8,13 @@ export default function RootPage() {
     const checkUser = async () => {
       const { data } = await supabase.auth.getUser()
 
-      if (data.user) {
-        window.location.href = '/dashboard'
-      } else {
+      const path = window.location.pathname
+
+      // 🔥 SI ES UNA PÁGINA PÚBLICA → NO HACER NADA
+      if (path.includes('/paquetes')) return
+
+      // 🔒 SOLO PROTEGER DASHBOARD
+      if (!data.user) {
         window.location.href = '/login'
       }
     }
