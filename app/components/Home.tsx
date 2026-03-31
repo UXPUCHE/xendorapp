@@ -89,25 +89,26 @@ export default function Home({
 
   // ✅ ÚNICO useEffect de resize (EL BUENO)
       useEffect(() => {
-        let lastHeight = 0
+        const sendHeight = () => {
+          const sticky = document.querySelector('[data-sticky]') as HTMLElement | null
+          const stickyHeight = sticky?.offsetHeight || 0
 
-      const sendHeight = () => {
-        const height = document.documentElement.scrollHeight
+          const height = document.body.scrollHeight + stickyHeight
 
-        window.parent.postMessage(
-          {
-            type: "resize",
-            height
-          },
-          "*"
-        )
-      }
+          window.parent.postMessage(
+            {
+              type: "resize",
+              height
+            },
+            "*"
+          )
+        }
 
         const observer = new ResizeObserver(() => {
           sendHeight()
         })
 
-        observer.observe(document.documentElement)
+        observer.observe(document.body)
 
         sendHeight()
 
@@ -203,7 +204,10 @@ useEffect(() => {
 
   // 🔥 FORZAR UPDATE DE ALTURA
   setTimeout(() => {
-    const height = document.body.scrollHeight
+    const sticky = document.querySelector('[data-sticky]') as HTMLElement | null
+
+    const stickyHeight = sticky?.offsetHeight || 0
+    const height = document.body.scrollHeight + stickyHeight
 
     window.parent.postMessage(
       {
