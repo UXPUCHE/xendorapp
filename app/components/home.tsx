@@ -88,31 +88,37 @@ export default function Home({
   const [tipoPlanSeleccionado, setTipoPlanSeleccionado] = useState('Base doble')
 
   // ✅ ÚNICO useEffect de resize (EL BUENO)
-  useEffect(() => {
-    let lastHeight = 0
+      useEffect(() => {
+        let lastHeight = 0
 
-    const sendHeight = () => {
-      const height = document.documentElement.scrollHeight
+        const sendHeight = () => {
+          const height = document.documentElement.scrollHeight
 
-      // evita loops micro
-      if (Math.abs(height - lastHeight) < 10) return
+          if (Math.abs(height - lastHeight) < 10) return
 
-      lastHeight = height
+          lastHeight = height
 
-      window.parent.postMessage(
-        {
-          type: "resize",
-          height
-        },
-        "*"
-      )
-    }
+          window.parent.postMessage(
+            {
+              type: "resize",
+              height
+            },
+            "*"
+          )
+        }
 
-    const timeout = setTimeout(sendHeight, 300)
+        const observer = new ResizeObserver(() => {
+          sendHeight()
+        })
 
-    return () => clearTimeout(timeout)
+        observer.observe(document.body)
 
-  }, [hotelSeleccionado, fechaSeleccionada, tipoPlanSeleccionado, ofertas])
+        // primer render
+        sendHeight()
+
+        return () => observer.disconnect()
+      }, [])
+
 
   // ⛔ ELIMINÁ COMPLETAMENTE el otro useEffect duplicado
 
