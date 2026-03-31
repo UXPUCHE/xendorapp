@@ -92,7 +92,7 @@ export default function Home({
         let lastHeight = 0
 
         const sendHeight = () => {
-          const height = document.documentElement.scrollHeight
+          const height = document.body.offsetHeight
 
           if (Math.abs(height - lastHeight) < 10) return
 
@@ -113,12 +113,10 @@ export default function Home({
 
         observer.observe(document.body)
 
-        // primer render
         sendHeight()
 
         return () => observer.disconnect()
       }, [])
-
 
   // ⛔ ELIMINÁ COMPLETAMENTE el otro useEffect duplicado
 
