@@ -800,7 +800,8 @@ const getDetalles = (oferta: Oferta | null) => {
           )
         })()}
 
-        {/* RESUMEN + BOTÓN RESERVAR */}
+{/* 
+  
         {hotelSeleccionado && (
           <div className="mt-12 bg-white p-10 rounded-3xl border border-gray-100 shadow-[0_20px_60px_rgba(0,0,0,0.08)] flex items-center justify-between">
             <div className="flex items-center gap-6">
@@ -841,8 +842,11 @@ const getDetalles = (oferta: Oferta | null) => {
             </div>
           </div>
         )}
+*/}
 
       </div>
+
+
 
       {/* STICKY FOOTER */}
       {hotelSeleccionado && (
