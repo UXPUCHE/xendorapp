@@ -113,19 +113,21 @@ export default function Home({
       console.log('DESTINO URL:', destino)
       console.log('DATA SUPABASE:', data)
       console.log('DESTINOS DB:', data?.map(o => o.destino))
+      console.log('DESTINO URL:', destino)
+      console.log('DESTINOS DB:', data?.map(o => o.destino))
 
-      
+
       const normalizar = (str: string) =>
         str
           ?.toLowerCase()
           .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "") // saca acentos
-          .replace(/\s+/g, '-') // espacios → guiones
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/\s+/g, '-')
           .trim()
 
       const ofertasFiltradas = ((data as Oferta[]) || []).filter(
         (o) =>
-          normalizar(o.destino).includes(normalizar(destino || ''))
+          normalizar(o.destino) === normalizar(destino || '')
       )
 
       setOfertas(ofertasFiltradas)
