@@ -82,45 +82,54 @@ export default function Home({
 {
 
   // 👇 PEGALO ACÁ
-  useEffect(() => {
-    const sendHeight = () => {
-      const body = document.body
-      const html = document.documentElement
+    useEffect(() => {
+      let lastHeight = 0
 
-      const height = Math.max(
-        body.scrollHeight,
-        body.offsetHeight,
-        html.clientHeight,
-        html.scrollHeight,
-        html.offsetHeight
-      )
+      const sendHeight = () => {
+        const body = document.body
+        const html = document.documentElement
 
-      // 🔥 sticky
-      const sticky = document.querySelector('[data-sticky]')
-      const stickyHeight = sticky ? sticky.clientHeight : 0
+        const height = Math.max(
+          body.scrollHeight,
+          body.offsetHeight,
+          html.clientHeight,
+          html.scrollHeight,
+          html.offsetHeight
+        )
 
-      const totalHeight = height + stickyHeight
+        const sticky = document.querySelector('[data-sticky]')
+        const stickyHeight = sticky ? sticky.clientHeight : 0
 
-      window.parent.postMessage(
-        {
-          type: "resize",
-          height: totalHeight
-        },
-        "*"
-      )
-    }
+        const totalHeight = height + stickyHeight
 
-    sendHeight()
+        // 🔥 SOLO si cambia
+        if (Math.abs(totalHeight - lastHeight) > 50) {
+          lastHeight = totalHeight
 
-    const observer = new ResizeObserver(sendHeight)
-    observer.observe(document.body)
+          window.parent.postMessage(
+            {
+              type: "resize",
+              height: totalHeight
+            },
+            "*"
+          )
+        }
+      }
 
-    window.addEventListener("load", sendHeight)
-    window.addEventListener("resize", sendHeight)
+      // delay inicial (clave)
+      setTimeout(sendHeight, 300)
 
-    return () => observer.disconnect()
-  }, [])
+      const observer = new ResizeObserver(() => {
+        sendHeight()
+      })
 
+      observer.observe(document.body)
+
+      window.addEventListener("load", sendHeight)
+      window.addEventListener("resize", sendHeight)
+
+      return () => observer.disconnect()
+    }, [])
   
   const [ofertas, setOfertas] = useState<Oferta[]>([])
   const [fechaSeleccionada, setFechaSeleccionada] = useState<Fecha | null>(null)
