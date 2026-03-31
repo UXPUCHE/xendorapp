@@ -424,7 +424,7 @@ const getDetalles = (oferta: Oferta | null) => {
 }
   return (
     <>
-      <div className="min-h-screen bg-[#FFFFF] max-w-5xl mx-auto px-4 py-8 pb-32">
+      <div className="min-h-screen bg-[#FFFFF] max-w-5xl mx-auto px-4 py-8 pb-24 md:pb-28">
 
         {/* FECHAS */}
         <h2 className="text-3xl font-semibold mb-4 text-[#0F3B4C]">Elegí tu fecha</h2>
