@@ -80,6 +80,48 @@ export default function Home({
 }: HomeProps)
 
 {
+
+  // 👇 PEGALO ACÁ
+  useEffect(() => {
+    const sendHeight = () => {
+      const body = document.body
+      const html = document.documentElement
+
+      const height = Math.max(
+        body.scrollHeight,
+        body.offsetHeight,
+        html.clientHeight,
+        html.scrollHeight,
+        html.offsetHeight
+      )
+
+      // 🔥 sticky
+      const sticky = document.querySelector('[data-sticky]')
+      const stickyHeight = sticky ? sticky.clientHeight : 0
+
+      const totalHeight = height + stickyHeight
+
+      window.parent.postMessage(
+        {
+          type: "resize",
+          height: totalHeight
+        },
+        "*"
+      )
+    }
+
+    sendHeight()
+
+    const observer = new ResizeObserver(sendHeight)
+    observer.observe(document.body)
+
+    window.addEventListener("load", sendHeight)
+    window.addEventListener("resize", sendHeight)
+
+    return () => observer.disconnect()
+  }, [])
+
+  
   const [ofertas, setOfertas] = useState<Oferta[]>([])
   const [fechaSeleccionada, setFechaSeleccionada] = useState<Fecha | null>(null)
   const [hotelSeleccionado, setHotelSeleccionado] = useState<Oferta | null>(null)
@@ -775,7 +817,7 @@ const getDetalles = (oferta: Oferta | null) => {
 
       {/* STICKY FOOTER */}
       {hotelSeleccionado && (
-        <div className="fixed bottom-0 left-0 w-full z-50 animate-slide-up">
+        <div data-sticky className="fixed bottom-0 left-0 w-full z-50 animate-slide-up">
           <div className="absolute -top-6 left-0 w-full h-6 bg-gradient-to-t from-white/60 to-transparent pointer-events-none" />
           <div className="backdrop-blur-md bg-white/85 border border-white/75 rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.15)]">
             <div className="max-w-5xl mx-auto px-4 py-5 md:py-6 flex items-center justify-between gap-6">
