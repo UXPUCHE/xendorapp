@@ -118,6 +118,24 @@ export default function Home({
         return () => observer.disconnect()
       }, [])
 
+
+      useEffect(() => {
+  if (!hotelSeleccionado) return
+
+  window.parent.postMessage(
+    {
+      type: "price_update",
+      payload: {
+        precio: hotelSeleccionado.precio,
+        hotel: hotelSeleccionado.hotel,
+        plan: tipoPlanSeleccionado,
+      }
+    },
+    "*"
+  )
+}, [hotelSeleccionado, tipoPlanSeleccionado])
+
+
   // ⛔ ELIMINÁ COMPLETAMENTE el otro useEffect duplicado
 
   useEffect(() => {
