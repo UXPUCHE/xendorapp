@@ -378,11 +378,16 @@ const getDetalles = (oferta: Oferta | null) => {
     asistencia: servicios?.asistencia || 'Asistencia incluida',
     otros: servicios?.otros || 'Post-venta',
   }
+
 }
+const stickyHeight = hotelSeleccionado ? 120 : 0
+
   return (
     <>
-      <div className="min-h-screen bg-[#FFFFF] max-w-5xl mx-auto px-4 py-8 pb-24 md:pb-28">
-
+        <div
+          className="bg-[#FFFFFF] max-w-5xl mx-auto px-4 py-8"
+          style={{ paddingBottom: stickyHeight }}
+        >
         {/* FECHAS */}
         <h2 className="text-3xl font-semibold mb-4 text-[#0F3B4C]">Elegí tu fecha</h2>
         <div className="flex gap-3 mb-10 flex-wrap">
