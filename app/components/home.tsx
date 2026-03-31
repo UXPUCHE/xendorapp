@@ -74,88 +74,47 @@ interface Fecha {
   fecha_fin: string
 }
 
+// ... todo tu código igual arriba
+
 export default function Home({
   destino,
   overrideOfertas,
 }: HomeProps)
 
 {
-
-  // 👇 PEGALO ACÁ
-    useEffect(() => {
-      const sendHeight = () => {
-        const body = document.body
-        const html = document.documentElement
-
-        const height = Math.max(
-          body.scrollHeight,
-          body.offsetHeight,
-          html.clientHeight,
-          html.scrollHeight,
-          html.offsetHeight
-        )
-
-        const sticky = document.querySelector('[data-sticky]')
-        const stickyHeight = sticky ? sticky.clientHeight : 0
-
-        const totalHeight = height + stickyHeight
-
-        window.parent.postMessage(
-          {
-            type: "resize",
-            height: totalHeight
-          },
-          "*"
-        )
-      }
-
-      // 🔥 solo eventos controlados (NO observer)
-      window.addEventListener("load", sendHeight)
-      window.addEventListener("resize", sendHeight)
-
-      // inicial + delay por render React
-      setTimeout(sendHeight, 300)
-      setTimeout(sendHeight, 800)
-
-      return () => {
-        window.removeEventListener("load", sendHeight)
-        window.removeEventListener("resize", sendHeight)
-      }
-    }, [])
-
-
   const [ofertas, setOfertas] = useState<Oferta[]>([])
   const [fechaSeleccionada, setFechaSeleccionada] = useState<Fecha | null>(null)
   const [hotelSeleccionado, setHotelSeleccionado] = useState<Oferta | null>(null)
   const [tipoPlanSeleccionado, setTipoPlanSeleccionado] = useState('Base doble')
 
-// 👇 NUEVO useEffect (PEGAR ACÁ)
-        useEffect(() => {
-          let lastHeight = 0
+  // ✅ ÚNICO useEffect de resize (EL BUENO)
+  useEffect(() => {
+    let lastHeight = 0
 
-          const sendHeight = () => {
-            const height = document.documentElement.scrollHeight
+    const sendHeight = () => {
+      const height = document.documentElement.scrollHeight
 
-            // 🚫 evita loops
-            if (Math.abs(height - lastHeight) < 50) return
+      // evita loops micro
+      if (Math.abs(height - lastHeight) < 10) return
 
-            lastHeight = height
+      lastHeight = height
 
-            window.parent.postMessage(
-              {
-                type: "resize",
-                height
-              },
-              "*"
-            )
-          }
+      window.parent.postMessage(
+        {
+          type: "resize",
+          height
+        },
+        "*"
+      )
+    }
 
-          const timeout = setTimeout(sendHeight, 300)
+    const timeout = setTimeout(sendHeight, 300)
 
-          return () => clearTimeout(timeout)
+    return () => clearTimeout(timeout)
 
-        }, [hotelSeleccionado, fechaSeleccionada, tipoPlanSeleccionado])
-  
+  }, [hotelSeleccionado, fechaSeleccionada, tipoPlanSeleccionado, ofertas])
+
+  // ⛔ ELIMINÁ COMPLETAMENTE el otro useEffect duplicado
 
   useEffect(() => {
     if (overrideOfertas) {
@@ -178,15 +137,6 @@ export default function Home({
         .from('ofertas')
         .select('external_id, destino, hotel, fecha_in, fecha_out, precio, pax, regimen, status, badge, imagen, vuelos, servicios')
         .eq('status', 'publicado')
-
-         console.log('DATA SUPABASE:', data) // 👈 ACÁ
-
-      console.log('DESTINO URL:', destino)
-      console.log('DATA SUPABASE:', data)
-      console.log('DESTINOS DB:', data?.map(o => o.destino))
-      console.log('DESTINO URL:', destino)
-      console.log('DESTINOS DB:', data?.map(o => o.destino))
-
 
       const normalizar = (str: string) =>
         str
@@ -215,6 +165,7 @@ export default function Home({
 
     fetchData()
   }, [destino, overrideOfertas])
+
 
   const fechas: Fecha[] = Array.from(
     new Map(
