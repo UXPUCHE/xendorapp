@@ -3,6 +3,31 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 
+const AIRLINE_CODES: Record<string, string> = {
+  'aerolineas argentinas': 'AR',
+  'latam': 'LA',
+  'gol': 'G3',
+  'american airlines': 'AA',
+  'delta': 'DL',
+  'avianca': 'AV',
+  'jet smart': 'JA',
+  'jetsmart': 'JA',
+}
+
+const normalize = (str: string) =>
+  str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+
+const getAirlineLogo = (name?: string | null) => {
+  if (!name) return null
+
+  const key = normalize(name)
+  const code = AIRLINE_CODES[key]
+
+  if (!code) return null
+
+  return `/airlines/${code}.svg`
+}
+
 type HomeProps = {
   destino: string
   overrideOfertas?: Oferta[]
@@ -12,14 +37,14 @@ interface Tramo {
   tipo: 'ida' | 'vuelta'
   origen: string
   destino: string
-  salida: string
-  llegada: string
 }
 
 interface Vuelos {
   tramos: Tramo[]
   clase?: string
   equipaje?: string
+  aerolinea?: string
+  escalas?: string
 }
 
 interface Servicios {
@@ -245,19 +270,6 @@ export default function Home({
     return (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
   }
 
-  const calcularDuracion = (salida: string, llegada: string): string => {
-    try {
-      const [hS, mS] = salida.split(':').map(Number)
-      const [hL, mL] = llegada.split(':').map(Number)
-      let minutos = hL * 60 + mL - (hS * 60 + mS)
-      if (minutos < 0) minutos += 24 * 60
-      const h = Math.floor(minutos / 60)
-      const m = minutos % 60
-      return m > 0 ? `${h}h ${m}m` : `${h}h`
-    } catch {
-      return ''
-    }
-  }
 
   const parsearVuelos = (vuelos: Vuelos | string | null | undefined): Vuelos | null => {
     if (!vuelos) return null
@@ -291,7 +303,16 @@ const getDetalles = (oferta: Oferta | null) => {
   const idaTramos = tramos.filter(t => t.tipo === 'ida')
   const vueltaTramos = tramos.filter(t => t.tipo === 'vuelta')
 
-  const getEscalaText = (segmentos: any[]) => {
+  const getEscalaSimple = (text: string | null | undefined, segmentos: any[]) => {
+    if (text) {
+      const t = text.toLowerCase()
+
+      if (t.includes('1')) return '1 escala'
+      if (t.includes('2')) return '2 escalas'
+
+      return '1 escala' // fallback si dice "Lima" por ejemplo
+    }
+
     const escalas = segmentos.length - 1
 
     if (escalas <= 0) return 'Directo'
@@ -304,13 +325,15 @@ const getDetalles = (oferta: Oferta | null) => {
       ? {
           ida: `${idaTramos[0]?.origen} → ${idaTramos[idaTramos.length - 1]?.destino}`,
           vuelta: `${vueltaTramos[0]?.origen} → ${vueltaTramos[vueltaTramos.length - 1]?.destino}`,
-          idaInfo: getEscalaText(idaTramos),
-          vueltaInfo: getEscalaText(vueltaTramos),
+          idaInfo: getEscalaSimple(vuelosParsed?.escalas, idaTramos),
+          vueltaInfo: getEscalaSimple(vuelosParsed?.escalas, vueltaTramos),
         }
       : null,
 
     clase: vuelosParsed?.clase || null,
     equipaje: vuelosParsed?.equipaje || null,
+    aerolinea: vuelosParsed?.aerolinea || null,
+    escalas: vuelosParsed?.escalas || null,
     transporte: servicios?.transporte || 'Traslado ida y vuelta',
     asistencia: servicios?.asistencia || 'Asistencia incluida',
     otros: servicios?.otros || 'Post-venta',
@@ -507,7 +530,25 @@ const getDetalles = (oferta: Oferta | null) => {
         <div className="border rounded-2xl px-5 py-4 bg-gray-50">
 
           {/* LABEL */}
-          <p className="text-base font-semibold text-[#0F6E56] mb-3">IDA</p>
+        <div className="flex items-center gap-3 mb-3">
+          <p className="text-base font-semibold text-[#0F6E56]">IDA</p>
+
+          {detalles?.aerolinea && (
+            <div className="flex items-center gap-2 text-base text-gray-500 leading-none">
+              <span className="text-gray-300">•</span>
+
+              {getAirlineLogo(detalles.aerolinea) && (
+                <img
+                  src={getAirlineLogo(detalles.aerolinea)!}
+                  className="h-5 object-contain"
+                  alt={detalles.aerolinea}
+                />
+              )}
+
+              <span>{detalles.aerolinea}</span>
+            </div>
+          )}
+        </div>
 
           {/* ROW */}
           <div className="flex items-center w-full h-[40px]">
@@ -525,13 +566,13 @@ const getDetalles = (oferta: Oferta | null) => {
 
                 {/* LINEA PERFECTAMENTE CENTRADA */}
                 <div className="flex items-center w-full gap-2 relative top-[12px]">
-                  <div className="flex-1 h-px bg-gray-300" />
+                  <div className="flex-1 h-px bg-gray-400" />
                   <span className="text-gray-400 text-sm">✈</span>
-                  <div className="flex-1 h-px bg-gray-300" />
+                  <div className="flex-1 h-px bg-gray-400" />
                 </div>
 
                 {/* TEXTO FUERA DEL FLOW */}
-                <p className="text-base text-gray-400 mt-2 text-center">
+                <p className="text-base text-gray-600 mt-2 text-center">
                   {detalles.vuelo.idaInfo}
                 </p>
 
@@ -561,9 +602,12 @@ const getDetalles = (oferta: Oferta | null) => {
 
               {detalles?.equipaje && (
                 <span className="text-xs px-3 py-1 rounded-full border text-gray-500">
-                  {detalles.equipaje}
+                  {detalles?.equipaje === 'mochila' && '🎒 Mochila'}
+                  {detalles?.equipaje === 'carry' && '👜 Carry + mochila'}
+                  {detalles?.equipaje === 'bodega' && '🧳 Equipaje en bodega'}
                 </span>
               )}
+
             </div>
         </div>
 
@@ -571,7 +615,25 @@ const getDetalles = (oferta: Oferta | null) => {
         <div className="border rounded-2xl px-5 py-4 bg-gray-50">
 
           {/* LABEL */}
-          <p className="text-base font-semibold text-[#185FA5] mb-3">VUELTA</p>
+        <div className="flex items-center gap-3 mb-3">
+          <p className="text-base font-semibold text-[#0F6E56]">VUELTA</p>
+
+          {detalles?.aerolinea && (
+            <div className="flex items-center gap-2 text-base text-gray-500 leading-none">
+              <span className="text-gray-300">•</span>
+
+              {getAirlineLogo(detalles.aerolinea) && (
+                <img
+                  src={getAirlineLogo(detalles.aerolinea)!}
+                  className="h-5 w-auto object-contain"
+                  alt={detalles.aerolinea}
+                />
+              )}
+
+              <span>{detalles.aerolinea}</span>
+            </div>
+          )}
+        </div>
 
           {/* ROW */}
               <div className="flex items-center w-full h-[40px]">
@@ -589,13 +651,13 @@ const getDetalles = (oferta: Oferta | null) => {
 
                     {/* LINEA PERFECTAMENTE CENTRADA */}
                     <div className="flex items-center w-full gap-2 relative top-[12px]">
-                      <div className="flex-1 h-px bg-gray-300" />
+                      <div className="flex-1 h-px bg-gray-400" />
                       <span className="text-gray-400 text-sm">✈</span>
-                      <div className="flex-1 h-px bg-gray-300" />
+                      <div className="flex-1 h-px bg-gray-400" />
                     </div>
 
                     {/* TEXTO FUERA DEL FLOW */}
-                    <p className="text-base text-gray-400 mt-2 text-center">
+                    <p className="text-base text-gray-600 mt-2 text-center">
                       {detalles.vuelo.idaInfo /* o vueltaInfo */}
                     </p>
 
@@ -613,7 +675,7 @@ const getDetalles = (oferta: Oferta | null) => {
           {/* TAGS */}
           <div className="flex gap-2 mt-4">
             <span className="text-sm px-3 py-1 rounded-full bg-[#E6F1FB] text-[#185FA5]">
-              {detalles.vuelo.vueltaInfo}
+              {detalles.vuelo.idaInfo}
             </span>
 
             {detalles?.clase && (
@@ -624,7 +686,9 @@ const getDetalles = (oferta: Oferta | null) => {
 
             {detalles?.equipaje && (
               <span className="text-xs px-3 py-1 rounded-full border text-gray-500">
-                {detalles.equipaje}
+                  {detalles?.equipaje === 'mochila' && '🎒 Mochila'}
+                  {detalles?.equipaje === 'carry' && '👜 Carry + mochila'}
+                  {detalles?.equipaje === 'bodega' && '🧳 Equipaje en bodega'}
               </span>
             )}
           </div>

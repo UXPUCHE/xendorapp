@@ -10,14 +10,15 @@ interface Tramo {
   tipo: TipoTramo
   origen: string
   destino: string
-  salida: string
-  llegada: string
 }
 
 interface Vuelos {
   tramos: Tramo[]
   clase?: string
   equipaje?: string
+
+  aerolinea?: string // 👈 NUEVO
+  escalas?: string // 👈 texto libre tipo “1 escala en LIM”
 }
 
 interface Servicios {
@@ -55,10 +56,10 @@ const initialState: Oferta = {
   badge: '',
   regimen: 'All inclusive',
   vuelos: {
-    tramos: [
-      { tipo: 'ida', origen: '', destino: '', salida: '', llegada: '' },
-      { tipo: 'vuelta', origen: '', destino: '', salida: '', llegada: '' },
-    ],
+  tramos: [
+    { tipo: 'ida', origen: '', destino: '' },
+    { tipo: 'vuelta', origen: '', destino: '' },
+  ],
     clase: '',
     equipaje: '',
   },
@@ -265,8 +266,8 @@ export default function Dashboard() {
             <Input label="Precio" placeholder="USD 1200" onChange={(e)=>update('precio',Number(e.target.value))} />
 
             <Select label="Base" onChange={(e)=>update('pax',e.target.value)}>
+              <option>Base single</option>
               <option>Base doble</option>
-              <option>Base triple</option>
               <option>Family Plan</option>
             </Select>
 
@@ -291,12 +292,66 @@ export default function Dashboard() {
           </div>
         </Card>
         
-        <Card title="Vuelos">
-          <div className="grid grid-cols-2 gap-4">
-            <Input label="Fecha inicio" type="date" onChange={(e) => update('fecha_in', e.target.value)} />
-            <Input label="Fecha fin" type="date" onChange={(e) => update('fecha_out', e.target.value)} />
-          </div>
-        </Card>
+              <Card title="Vuelos">
+
+                {/* FECHAS */}
+                <div className="grid grid-cols-2 gap-4">
+                  <Input label="Fecha inicio" type="date" onChange={(e) => update('fecha_in', e.target.value)} />
+                  <Input label="Fecha fin" type="date" onChange={(e) => update('fecha_out', e.target.value)} />
+                </div>
+
+                {/* INFO GENERAL VUELO 👇 NUEVO */}
+                <div className="grid grid-cols-3 gap-4 mt-4">
+
+                  <Input
+                    label="Aerolínea"
+                    placeholder="Ej: LATAM"
+                    onChange={(e) =>
+                      setOfertaDraft(prev => ({
+                        ...prev,
+                        vuelos: {
+                          ...prev.vuelos,
+                          aerolinea: e.target.value,
+                        },
+                      }))
+                    }
+                  />
+
+                  <Input
+                    label="Escalas"
+                    placeholder="Ej: 1 escala en Lima"
+                    onChange={(e) =>
+                      setOfertaDraft(prev => ({
+                        ...prev,
+                        vuelos: {
+                          ...prev.vuelos,
+                          escalas: e.target.value,
+                        },
+                      }))
+                    }
+                  />
+
+                  <Select
+                    label="Equipaje"
+                    onChange={(e) =>
+                      setOfertaDraft(prev => ({
+                        ...prev,
+                        vuelos: {
+                          ...prev.vuelos,
+                          equipaje: e.target.value,
+                        },
+                      }))
+                    }
+                  >
+                    <option value="">Seleccionar</option>
+                    <option value="mochila">🎒 Solo mochila</option>
+                    <option value="carry">👜 Carry + mochila</option>
+                    <option value="bodega">🧳 Equipaje en bodega</option>
+                  </Select>
+
+                </div>
+
+              </Card>
 
         {/* VUELOS */}
         <Card title="Vuelos">
@@ -304,16 +359,12 @@ export default function Dashboard() {
           <div className="grid grid-cols-2 gap-3">
             <Input label="Origen" placeholder="EZE" onChange={(e)=>updateVuelo('ida','origen',e.target.value)} />
             <Input label="Destino" placeholder="PUJ" onChange={(e)=>updateVuelo('ida','destino',e.target.value)} />
-            <Input label="Salida" placeholder="10:00" onChange={(e)=>updateVuelo('ida','salida',e.target.value)} />
-            <Input label="Llegada" placeholder="16:00" onChange={(e)=>updateVuelo('ida','llegada',e.target.value)} />
           </div>
 
           <p className="text-xs text-gray-400 mt-4">VUELTA</p>
           <div className="grid grid-cols-2 gap-3">
             <Input label="Origen" placeholder="PUJ" onChange={(e)=>updateVuelo('vuelta','origen',e.target.value)} />
             <Input label="Destino" placeholder="EZE" onChange={(e)=>updateVuelo('vuelta','destino',e.target.value)} />
-            <Input label="Salida" placeholder="18:00" onChange={(e)=>updateVuelo('vuelta','salida',e.target.value)} />
-            <Input label="Llegada" placeholder="02:00" onChange={(e)=>updateVuelo('vuelta','llegada',e.target.value)} />
           </div>
         </Card>
 
