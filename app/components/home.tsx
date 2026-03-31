@@ -128,6 +128,46 @@ export default function Home({
   const [fechaSeleccionada, setFechaSeleccionada] = useState<Fecha | null>(null)
   const [hotelSeleccionado, setHotelSeleccionado] = useState<Oferta | null>(null)
   const [tipoPlanSeleccionado, setTipoPlanSeleccionado] = useState('Base doble')
+
+// 👇 NUEVO useEffect (PEGAR ACÁ)
+useEffect(() => {
+  const sendHeight = () => {
+    const body = document.body
+    const html = document.documentElement
+
+    const height = Math.max(
+      body.scrollHeight,
+      body.offsetHeight,
+      html.clientHeight,
+      html.scrollHeight,
+      html.offsetHeight
+    )
+
+    const sticky = document.querySelector('[data-sticky]')
+    const stickyHeight = sticky ? sticky.clientHeight : 0
+
+    const totalHeight = height + stickyHeight
+
+    window.parent.postMessage(
+      {
+        type: "resize",
+        height: totalHeight
+      },
+      "*"
+    )
+  }
+
+  const t1 = setTimeout(sendHeight, 200)
+  const t2 = setTimeout(sendHeight, 600)
+  const t3 = setTimeout(sendHeight, 1200)
+
+  return () => {
+    clearTimeout(t1)
+    clearTimeout(t2)
+    clearTimeout(t3)
+  }
+
+}, [hotelSeleccionado, fechaSeleccionada, tipoPlanSeleccionado])
   
 
   useEffect(() => {
@@ -400,7 +440,7 @@ const getDetalles = (oferta: Oferta | null) => {
       <div className="min-h-screen bg-[#FFFFF] max-w-5xl mx-auto px-4 py-8 pb-32">
 
         {/* FECHAS */}
-        <h2 className="text-lg font-semibold mb-4 text-[#0F3B4C]">Elegí tu fecha</h2>
+        <h2 className="text-3xl font-semibold mb-4 text-[#0F3B4C]">Elegí tu fecha</h2>
         <div className="flex gap-3 mb-10 flex-wrap">
           {fechas.map((f, i) => (
             <button
@@ -433,7 +473,7 @@ const getDetalles = (oferta: Oferta | null) => {
         {/* TIPO DE PLAN */}
         {getPlanesGlobales().length > 1 && (
           <>
-            <h2 className="text-lg font-semibold mb-4 text-[#0F3B4C]">Tipo de plan</h2>
+            <h2 className="text-3xl font-semibold mb-4 text-[#0F3B4C]">Tipo de plan</h2>
             <div className="flex gap-3 mb-10 flex-wrap">
               {getPlanesGlobales().map((plan) => {
                 const planesDisponibles = getPlanesPorFecha()
@@ -458,7 +498,7 @@ const getDetalles = (oferta: Oferta | null) => {
         )}
 
         {/* HOTELES */}
-        <h2 className="text-lg font-semibold mb-6 text-[#0F3B4C]">Elegí tu hotel</h2>
+        <h2 className="text-3xl font-semibold mb-6 text-[#0F3B4C]">Elegí tu hotel</h2>
 
         {ofertasFiltradas.length === 0 ? (
           <div className="text-center text-gray-400 mt-10">
