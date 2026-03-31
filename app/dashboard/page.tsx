@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, ChangeEvent } from 'react'
-import Home from '@/app/components/home'
+import Home from '@/app/components/Home'
 import { supabase } from '@/lib/supabase'
 
 type TipoTramo = 'ida' | 'vuelta'

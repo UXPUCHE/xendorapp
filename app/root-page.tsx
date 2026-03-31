@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { supabase } from '../lib/supabase'
-import Home from './components/home'
+import Home from './components/Home'
 
 export default function RootPage() {
   const searchParams = useSearchParams()
