@@ -83,8 +83,6 @@ export default function Home({
 
   // 👇 PEGALO ACÁ
     useEffect(() => {
-      let lastHeight = 0
-
       const sendHeight = () => {
         const body = document.body
         const html = document.documentElement
@@ -102,35 +100,30 @@ export default function Home({
 
         const totalHeight = height + stickyHeight
 
-        // 🔥 SOLO si cambia
-        if (Math.abs(totalHeight - lastHeight) > 50) {
-          lastHeight = totalHeight
-
-          window.parent.postMessage(
-            {
-              type: "resize",
-              height: totalHeight
-            },
-            "*"
-          )
-        }
+        window.parent.postMessage(
+          {
+            type: "resize",
+            height: totalHeight
+          },
+          "*"
+        )
       }
 
-      // delay inicial (clave)
-      setTimeout(sendHeight, 300)
-
-      const observer = new ResizeObserver(() => {
-        sendHeight()
-      })
-
-      observer.observe(document.body)
-
+      // 🔥 solo eventos controlados (NO observer)
       window.addEventListener("load", sendHeight)
       window.addEventListener("resize", sendHeight)
 
-      return () => observer.disconnect()
+      // inicial + delay por render React
+      setTimeout(sendHeight, 300)
+      setTimeout(sendHeight, 800)
+
+      return () => {
+        window.removeEventListener("load", sendHeight)
+        window.removeEventListener("resize", sendHeight)
+      }
     }, [])
-  
+
+
   const [ofertas, setOfertas] = useState<Oferta[]>([])
   const [fechaSeleccionada, setFechaSeleccionada] = useState<Fecha | null>(null)
   const [hotelSeleccionado, setHotelSeleccionado] = useState<Oferta | null>(null)
