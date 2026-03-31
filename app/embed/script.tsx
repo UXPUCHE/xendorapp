@@ -1,7 +1,7 @@
 'use client'
 
 import { createRoot } from 'react-dom/client'
-import Home from '../components/Home'
+import Home from '@/app/components/Home'
 
 export function mountXendor(containerId: string, destino: string) {
   const el = document.getElementById(containerId)

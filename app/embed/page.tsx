@@ -1,6 +1,6 @@
 'use client'
 
-import Home from '../components/Home'
+import Home from '@/app/components/Home'
 import { useSearchParams } from 'next/navigation'
 
 export default function EmbedPage() {
