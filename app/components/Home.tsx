@@ -421,14 +421,11 @@ const getDetalles = (oferta: Oferta | null) => {
   }
 
 }
-const stickyHeight = hotelSeleccionado ? 120 : 0
 
   return (
     <>
-        <div
-          className="bg-[#FFFFFF] max-w-5xl mx-auto px-4 py-8"
-          style={{ paddingBottom: stickyHeight }}
-        >
+      <div className="bg-[#FFFFFF] max-w-5xl mx-auto px-4 py-8">
+        
         {/* FECHAS */}
         <h2 className="text-3xl font-semibold mb-4 text-[#0F3B4C]">Elegí tu fecha</h2>
         <div className="flex gap-3 mb-10 flex-wrap">
