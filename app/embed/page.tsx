@@ -1,15 +1,20 @@
 'use client'
 
+import { Suspense } from 'react'
 import Home from '@/app/components/Home'
 import { useSearchParams } from 'next/navigation'
 
-export default function EmbedPage() {
+function EmbedContent() {
   const params = useSearchParams()
   const destino = params.get('destino') || ''
 
+  return <Home destino={destino} />
+}
+
+export default function EmbedPage() {
   return (
-    <div style={{ width: '100%' }}>
-      <Home destino={destino} />
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <EmbedContent />
+    </Suspense>
   )
 }
