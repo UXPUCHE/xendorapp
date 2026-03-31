@@ -110,7 +110,11 @@ export default function Home({
 
          console.log('DATA SUPABASE:', data) // 👈 ACÁ
 
+      console.log('DESTINO URL:', destino)
+      console.log('DATA SUPABASE:', data)
+      console.log('DESTINOS DB:', data?.map(o => o.destino))
 
+      
       const normalizar = (str: string) =>
         str
           ?.toLowerCase()
