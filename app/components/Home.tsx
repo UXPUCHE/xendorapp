@@ -184,17 +184,19 @@ useEffect(() => {
 
   if (!precio) return
 
-  window.parent.postMessage(
-    {
-      type: "price_update",
-      payload: {
-        precio,
-        hotel: hotelSeleccionado?.hotel || ofertasFiltradas[0]?.hotel,
-        plan: tipoPlanSeleccionado,
-      }
-    },
-    "*"
-  )
+window.parent.postMessage(
+  {
+    type: "price_update",
+    payload: {
+      precio,
+      hotel: hotelSeleccionado?.hotel || ofertasFiltradas[0]?.hotel,
+      plan: tipoPlanSeleccionado,
+      destino: formatDestino(hotelSeleccionado?.destino || ofertasFiltradas[0]?.destino),
+      fecha: `${formatFecha(fechaSeleccionada?.fecha_inicio || '')} al ${formatFecha(fechaSeleccionada?.fecha_fin || '')}`,
+    }
+  },
+  "*"
+)
 
 }, [hotelSeleccionado, ofertasFiltradas, tipoPlanSeleccionado])
 
