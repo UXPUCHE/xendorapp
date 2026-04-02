@@ -184,6 +184,9 @@ useEffect(() => {
 
   if (!precio) return
 
+  const ofertaActiva = hotelSeleccionado || ofertasFiltradas[0] || null
+  const urgency = ofertaActiva ? getUrgency(ofertaActiva) : null
+
 window.parent.postMessage(
   {
     type: "price_update",
@@ -193,6 +196,7 @@ window.parent.postMessage(
       plan: tipoPlanSeleccionado,
       destino: formatDestino(hotelSeleccionado?.destino || ofertasFiltradas[0]?.destino),
       fecha: `${formatFecha(fechaSeleccionada?.fecha_inicio || '')} al ${formatFecha(fechaSeleccionada?.fecha_fin || '')}`,
+      urgency
     }
   },
   "*"
