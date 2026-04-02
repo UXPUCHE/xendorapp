@@ -471,7 +471,7 @@ return (
             No hay opciones disponibles para este plan en esta fecha.
           </div>
         ) : (
-          <div className="grid gap-5">
+          <div className="grid gap-5 max-w-[1100px]">
             {[...ofertasFiltradas]
               .sort((a, b) => {
                 const prioridad = (o: Oferta) => {
