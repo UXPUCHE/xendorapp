@@ -402,12 +402,9 @@ const getDetalles = (oferta: Oferta | null) => {
 
 }
 
-  return (
-    <>
-        <div
-          className="bg-[#FFFFFF] mx-auto py-8"
-          style={{ maxWidth: '1140px' }}
-        >
+return (
+  <div className="react-container bg-[#FFFFFF] py-8 mx-auto">
+       
         {/* FECHAS */}
         <h2 className="text-3xl font-semibold mb-4 text-[#0F3B4C]">Elegí tu fecha</h2>
         <div className="flex gap-3 mb-10 flex-wrap">
@@ -834,7 +831,7 @@ const getDetalles = (oferta: Oferta | null) => {
 
 
 
-{/* ESPACIO PARA STICKY
+/* ESPACIO PARA STICKY
 {hotelSeleccionado && (
   <div style={{ height: '120px' }} />
 )}
@@ -881,8 +878,7 @@ const getDetalles = (oferta: Oferta | null) => {
             </div>
           </div>
         </div>
-      )}
-     */}
-    </>
+)}
+        */
   )
 }
