@@ -403,7 +403,7 @@ const getDetalles = (oferta: Oferta | null) => {
 }
 
 return (
-  <div className="react-container bg-[#FFFFFF] py-8 px-0">
+  <div className="react-container bg-[#FFFFFF] py-8 mx-auto px-6 md:px-10">
        
         {/* FECHAS */}
         <h2 className="text-3xl font-semibold mb-4 text-[#0F3B4C]">Elegí tu fecha</h2>
@@ -471,7 +471,7 @@ return (
             No hay opciones disponibles para este plan en esta fecha.
           </div>
         ) : (
-          <div className="grid gap-5 max-w-[1100px]">
+          <div className="grid gap-5">
             {[...ofertasFiltradas]
               .sort((a, b) => {
                 const prioridad = (o: Oferta) => {
