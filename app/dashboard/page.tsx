@@ -3,6 +3,7 @@
 import { useState, useEffect, ChangeEvent } from 'react'
 import Home from '@/app/components/Home'
 import { supabase } from '@/lib/supabase'
+import Toast from '@/app/components/Toast'
 
 type TipoTramo = 'ida' | 'vuelta'
 
@@ -120,6 +121,7 @@ const Card = ({ title, children }: any) => (
 export default function Dashboard() {
   const [ofertaDraft, setOfertaDraft] = useState<Oferta>(initialState)
   const [uploading, setUploading] = useState(false)
+  const [toast, setToast] = useState<string | null>(null)
 
   // 🔐 USER
   const [user, setUser] = useState<any>(null)
@@ -134,6 +136,16 @@ export default function Dashboard() {
       }
     })
   }, [])
+
+  useEffect(() => {
+  if (!toast) return
+
+  const timer = setTimeout(() => {
+    setToast(null)
+  }, 2500)
+
+  return () => clearTimeout(timer)
+}, [toast])
 
   // 🚪 LOGOUT
   const handleLogout = async () => {
@@ -180,11 +192,11 @@ export default function Dashboard() {
       console.log('ERROR:', error)
 
       if (error) {
-        alert(error.message)
+        setToast('Error al guardar ❌')
         return
       }
 
-      alert('Guardado 🚀')
+     setToast('🚀 Publicado con éxito')
     }
 
   const handleUpload = async (file: File) => {
@@ -415,6 +427,12 @@ export default function Dashboard() {
         <Home destino={ofertaDraft.destino || 'punta-cana'} overrideOfertas={[ofertaDraft]} />
       </div>
 
+      {/* PREVIEW */}
+      <div className="bg-[#F5F5F5] overflow-auto">
+        <Home destino={ofertaDraft.destino || 'punta-cana'} overrideOfertas={[ofertaDraft]} />
+      </div>
+
+      {toast && <Toast message={toast} />}
     </div>
   )
 }
