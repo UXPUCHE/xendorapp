@@ -564,11 +564,11 @@ return (
                       <p className="text-4xl font-bold text-[#0F3B4C] tracking-[-0.02em]">
                         USD {oferta.precio}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-base text-gray-500">
                         Por persona en {tipoPlanSeleccionado.toLowerCase()}
                       </p>
                       {urgency && (
-                        <p className="text-xs mt-2 text-red-500 font-semibold">{urgency}</p>
+                        <p className="text-base mt-2 text-[#00A99D] font-normal">{urgency}</p>
                       )}
                       {isSelected && (
                         <span className="mt-2 text-xs font-semibold text-[#00A99D]">✓ Seleccionado</span>
