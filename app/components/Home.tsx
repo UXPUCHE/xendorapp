@@ -554,7 +554,7 @@ return (
                       </div>
                     </div>
 
-                    <div className="text-right flex flex-col items-end justify-center h-full">
+                    <div className="text-right flex flex-col items-end justify-center h-full pr-6">
                       <p className="text-base text-gray-500 mb-0 leading-none">Desde</p>
                       <p className="text-4xl font-bold text-[#0F3B4C] tracking-[-0.02em]">
                         USD {oferta.precio}
