@@ -11,7 +11,7 @@ export default function Login() {
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (data.user) {
-        window.location.href = '/dashboard'
+        window.location.href = '/admin' // 👈 CAMBIO
       }
     })
   }, [])
@@ -29,7 +29,7 @@ export default function Login() {
     if (error) {
       alert(error.message)
     } else {
-      window.location.href = '/dashboard'
+      window.location.href = '/admin' // 👈 CAMBIO
     }
   }
 
