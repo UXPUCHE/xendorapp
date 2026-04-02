@@ -324,8 +324,9 @@ window.parent.postMessage(
     if (!oferta || !preciosValidos.length) return null
     const preciosOrdenados = [...new Set(preciosValidos)].sort((a, b) => a - b)
     const index = preciosOrdenados.indexOf(oferta.precio)
-    if (index === 0) return '🔥 Quedan 2 lugares'
-    if (index === 1) return '⚠️ Pocas habitaciones disponibles'
+    if (index === 0) return '💸 Mejor precio disponible'
+    if (index === 1) return '⚡ Se está reservando rápido'
+    if (index === 2) return '✨ Opción recomendada'
     return null
   }
 
