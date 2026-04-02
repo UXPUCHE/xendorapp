@@ -507,7 +507,7 @@ return (
                     onClick={() => {
                       setHotelSeleccionado(oferta)
                     }}
-                  className={`group cursor-pointer bg-white rounded-2xl pl-0 pr-4 py-0 flex gap-4 items-stretch min-h-[180px] transition-all duration-300 ease-out ${
+                  className={`group cursor-pointer bg-white rounded-2xl overflow-visible pl-0 pr-4 py-0 flex gap-4 items-stretch min-h-[180px] transition-all duration-300 ease-out ${
                     isSelected
                       ? 'ring-2 ring-[#00A99D]/0 shadow-xl scale-[1.02]'
                       : 'shadow-md hover:shadow-xl hover:scale-[1.015]'
