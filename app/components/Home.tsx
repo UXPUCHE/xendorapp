@@ -507,20 +507,19 @@ return (
                     onClick={() => {
                       setHotelSeleccionado(oferta)
                     }}
-                  className={`group cursor-pointer bg-white rounded-2xl overflow-visible pl-0 pr-4 py-0 flex gap-4 items-stretch min-h-[180px] transition-all duration-300 ease-out ${
-                    isSelected
+                      className={`group cursor-pointer bg-white rounded-2xl overflow-hidden flex gap-4 items-stretch min-h-[180px] transition-all duration-300 ease-out ${                    isSelected
                       ? 'ring-2 ring-[#00A99D]/0 shadow-xl scale-[1.02]'
                       : 'shadow-md hover:shadow-xl hover:scale-[1.015]'
                   }`}
                   
                   >
-                    <div className="w-[260px] flex-shrink-0 self-stretch overflow-hidden rounded-l-2xl">
+                    <div className="w-[260px] flex-shrink-0 self-stretch overflow-hidden">
                       <img
                         src={oferta.imagen?.trim() || 'https://placehold.co/100x100'}
                         onError={(e) => {
                           (e.currentTarget as HTMLImageElement).src = 'https://placehold.co/100x100'
                         }}
-                        className="block w-full h-full object-cover rounded-l-3xl min-h-full"
+                        className="w-full h-full object-cover"
                         alt={oferta.hotel}
                       />
                     </div>
