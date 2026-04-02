@@ -403,7 +403,7 @@ const getDetalles = (oferta: Oferta | null) => {
 }
 
 return (
-  <div className="react-container bg-[#FFFFFF] py-8 mx-auto px-4">
+  <div className="react-container bg-[#FFFFFF] py-8 mx-auto px-8 md:px-12">
        
         {/* FECHAS */}
         <h2 className="text-3xl font-semibold mb-4 text-[#0F3B4C]">Elegí tu fecha</h2>
@@ -509,7 +509,7 @@ return (
                     }}
                       className={`group cursor-pointer bg-white rounded-2xl overflow-hidden flex gap-4 items-stretch min-h-[180px] transition-all duration-300 ease-out ${                    isSelected
                       ? 'ring-2 ring-[#00A99D]/0 shadow-xl scale-[1.02]'
-                      : 'shadow-md hover:shadow-xl hover:scale-[1.015]'
+                      : 'shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:shadow-[0_12px_35px_rgba(0,0,0,0.12)]'
                   }`}
                   
                   >
