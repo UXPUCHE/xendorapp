@@ -404,8 +404,10 @@ const getDetalles = (oferta: Oferta | null) => {
 
   return (
     <>
-      <div className="bg-[#FFFFFF] max-w-5xl mx-auto px-4 py-8">
-        
+        <div
+          className="bg-[#FFFFFF] mx-auto py-8"
+          style={{ maxWidth: '1140px' }}
+        >
         {/* FECHAS */}
         <h2 className="text-3xl font-semibold mb-4 text-[#0F3B4C]">Elegí tu fecha</h2>
         <div className="flex gap-3 mb-10 flex-wrap">
