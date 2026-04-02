@@ -90,10 +90,7 @@ export default function Home({
   // ✅ ÚNICO useEffect de resize (EL BUENO)
       useEffect(() => {
         const sendHeight = () => {
-          const sticky = document.querySelector('[data-sticky]') as HTMLElement | null
-          const stickyHeight = sticky?.offsetHeight || 0
-
-          const height = document.body.scrollHeight + stickyHeight
+          const height = document.body.scrollHeight
 
           window.parent.postMessage(
             {
@@ -104,17 +101,14 @@ export default function Home({
           )
         }
 
-        const observer = new ResizeObserver(() => {
-          sendHeight()
-        })
+        const observer = new ResizeObserver(sendHeight)
 
-        observer.observe(document.body)
+        observer.observe(document.documentElement)
 
         sendHeight()
 
         return () => observer.disconnect()
       }, [])
-
     
 
 
@@ -201,22 +195,6 @@ useEffect(() => {
     },
     "*"
   )
-
-  // 🔥 FORZAR UPDATE DE ALTURA
-  setTimeout(() => {
-    const sticky = document.querySelector('[data-sticky]') as HTMLElement | null
-
-    const stickyHeight = sticky?.offsetHeight || 0
-    const height = document.body.scrollHeight + stickyHeight
-
-    window.parent.postMessage(
-      {
-        type: "resize",
-        height
-      },
-      "*"
-    )
-  }, 100)
 
 }, [hotelSeleccionado, ofertasFiltradas, tipoPlanSeleccionado])
 
@@ -525,24 +503,9 @@ const getDetalles = (oferta: Oferta | null) => {
                   
                 <div
                   key={oferta.external_id}
-                  onClick={() => {
-                    setHotelSeleccionado(oferta)
-
-                    setTimeout(() => {
-                      const sticky = document.querySelector('[data-sticky]') as HTMLElement | null
-                      const stickyHeight = sticky?.offsetHeight || 0
-
-                      const height = document.body.scrollHeight + stickyHeight
-
-                      window.parent.postMessage(
-                        {
-                          type: "resize",
-                          height
-                        },
-                        "*"
-                      )
-                    }, 50)
-                  }}
+                    onClick={() => {
+                      setHotelSeleccionado(oferta)
+                    }}
                   className={`group cursor-pointer bg-white rounded-2xl pl-0 pr-4 py-0 flex gap-4 items-stretch min-h-[180px] transition-all duration-300 ease-out ${
                     isSelected
                       ? 'ring-2 ring-[#00A99D]/0 shadow-xl scale-[1.02]'
@@ -866,12 +829,13 @@ const getDetalles = (oferta: Oferta | null) => {
 
 
 
-{/* ESPACIO PARA STICKY */}
+
+{/* ESPACIO PARA STICKY
 {hotelSeleccionado && (
   <div style={{ height: '120px' }} />
 )}
 
-{/* STICKY FOOTER */}
+
 {hotelSeleccionado && (
   <div data-sticky className="fixed bottom-0 left-0 w-full z-50 animate-slide-up">
           <div className="absolute -top-6 left-0 w-full h-6 bg-gradient-to-t from-white/60 to-transparent pointer-events-none" />
@@ -914,6 +878,7 @@ const getDetalles = (oferta: Oferta | null) => {
           </div>
         </div>
       )}
+     */}
     </>
   )
 }
