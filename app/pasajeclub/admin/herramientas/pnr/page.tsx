@@ -87,43 +87,71 @@ export default function HerramientasPage() {
     ])
   }
 
-/* =========================
-   PNR PARSER + UI PRO
-========================= */
+  /* =========================
+     PNR PARSER PRO
+  ========================= */
 
-const [pnrText, setPnrText] = useState('')
-const [parsedFlights, setParsedFlights] = useState<any[]>([])
+  const [pnrText, setPnrText] = useState('')
+  const [parsedFlights, setParsedFlights] = useState<any[]>([])
 
-const parsePNR = () => {
-  const lines = pnrText.split('\n')
+  const parsePNR = () => {
+    const lines = pnrText.split('\n')
 
-  const flights = lines
-    .map(line => {
+    const flights = lines
+      .map(line => {
 
-      const clean = line.trim()
+        const clean = line
+          .replace(/\s+/g, ' ')
+          .replace('+1', '')
+          .trim()
 
-      if (!clean) return null
+        if (!clean) return null
 
-      // regex inteligente
-      const match = clean.match(
-        /([A-Z]{2})\s?(\d{2,4})\s.*?(\d{2}[A-Z]{3})\s([A-Z]{3})\s([A-Z]{3})\s(\d{3,4})\s(\d{3,4}\+?\d?)/
-      )
+        try {
 
-      if (!match) return null
+          // ✈️ vuelo (AA931)
+          const vueloMatch = clean.match(/([A-Z]{2})(\d{2,4})/)
+          if (!vueloMatch) return null
 
-      return {
-        vuelo: `${match[1]} ${match[2]}`,
-        fecha: match[3],
-        origen: match[4],
-        destino: match[5],
-        salida: match[6],
-        llegada: match[7],
-      }
-    })
-    .filter(Boolean)
+          // 📅 fecha (10AUG)
+          const fechaMatch = clean.match(/\d{2}[A-Z]{3}/)
+          if (!fechaMatch) return null
 
-  setParsedFlights(flights)
-}
+          // 🌍 ruta (EZEJFK o CORLIM)
+          const routeMatch = clean.match(/[A-Z]{6}/)
+          if (!routeMatch) return null
+
+          const origen = routeMatch[0].slice(0, 3)
+          const destino = routeMatch[0].slice(3, 6)
+
+          // ⏰ horas (2200 0600)
+          const timeMatches = clean.match(/\d{4}/g)
+          if (!timeMatches || timeMatches.length < 2) return null
+
+          const salida = timeMatches[0]
+          const llegada = timeMatches[1]
+
+          return {
+            vuelo: `${vueloMatch[1]} ${vueloMatch[2]}`,
+            fecha: fechaMatch[0],
+            origen,
+            destino,
+            salida,
+            llegada,
+          }
+
+        } catch (err) {
+          console.log('Error parsing line:', clean)
+          return null
+        }
+      })
+      .filter(Boolean)
+
+    console.log('FLIGHTS:', flights)
+
+    setParsedFlights(flights)
+  }
+
   /* =========================
      UI
   ========================= */
@@ -131,118 +159,118 @@ const parsePNR = () => {
   return (
     <div className="space-y-10">
 
-{/* =========================
-   LECTOR DE VUELOS
-========================= */}
+      {/* =========================
+         LECTOR DE VUELOS
+      ========================= */}
 
-<div className="bg-white p-6 rounded-2xl border shadow-sm space-y-6">
+      <div className="bg-white p-6 rounded-2xl border shadow-sm space-y-6">
 
-  <h3 className="text-lg font-semibold text-[#0f3b4c]">
-    Lector de vuelos ✈️
-  </h3>
+        <h3 className="text-lg font-semibold text-[#0f3b4c]">
+          Lector de vuelos ✈️
+        </h3>
 
-<textarea
-  placeholder="Pegá el itinerario (PNR / Amadeus / Sabre)"
-  className="w-full h-40 border border-gray-200 rounded-xl p-4 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0f3b4c]/20"
-  onChange={(e) => setPnrText(e.target.value)}
-/>
+        <textarea
+          placeholder="Pegá el itinerario (PNR / Amadeus / Sabre)"
+          className="w-full h-40 border border-gray-200 rounded-xl p-4 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0f3b4c]/20"
+          onChange={(e) => setPnrText(e.target.value)}
+        />
 
-  <button
-    onClick={parsePNR}
-    className="w-full bg-[#0f3b4c] text-white py-3 rounded-xl font-medium hover:opacity-90 transition"
-  >
-    Procesar vuelos
-  </button>
+        <button
+          onClick={parsePNR}
+          className="w-full bg-[#0f3b4c] text-white py-3 rounded-xl font-medium hover:opacity-90 transition"
+        >
+          Procesar vuelos
+        </button>
 
-  {/* RESULTADO */}
-  {parsedFlights.length > 0 && (() => {
+        {/* RESULTADO */}
+        {parsedFlights.length > 0 && (() => {
 
-    const mitad = Math.ceil(parsedFlights.length / 2)
-    const ida = parsedFlights.slice(0, mitad)
-    const vuelta = parsedFlights.slice(mitad)
+          const mitad = Math.ceil(parsedFlights.length / 2)
+          const ida = parsedFlights.slice(0, mitad)
+          const vuelta = parsedFlights.slice(mitad)
 
-    return (
-      <div className="space-y-6">
+          return (
+            <div className="space-y-6">
 
-        {/* IDA */}
-        <div>
-          <h4 className="text-sm font-semibold text-[#0F3B4C] mb-3">
-            Ida
-          </h4>
+              {/* IDA */}
+              <div>
+                <h4 className="text-sm font-semibold text-[#0F3B4C] mb-3">
+                  Ida
+                </h4>
 
-          <div className="space-y-3">
-            {ida.map((f, i) => (
-              <div
-                key={i}
-                className="border rounded-xl p-4 bg-gray-50"
-              >
+                <div className="space-y-3">
+                  {ida.map((f, i) => (
+                    <div
+                      key={i}
+                      className="border rounded-xl p-4 bg-gray-50"
+                    >
 
-                <p className="text-lg font-semibold text-[#0F3B4C]">
-                  {f.origen} → {f.destino}
-                </p>
+                      <p className="text-lg font-semibold text-[#0F3B4C]">
+                        {f.origen} → {f.destino}
+                      </p>
 
-                <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
-                  <span>{f.salida}</span>
-                  <span className="text-gray-300">→</span>
-                  <span>{f.llegada}</span>
+                      <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
+                        <span>{f.salida}</span>
+                        <span className="text-gray-300">→</span>
+                        <span>{f.llegada}</span>
+                      </div>
+
+                      <p className="text-sm text-gray-500 mt-1">
+                        {f.fecha}
+                      </p>
+
+                      <p className="text-xs text-gray-400 mt-2">
+                        {f.vuelo}
+                      </p>
+
+                    </div>
+                  ))}
                 </div>
-
-                <p className="text-sm text-gray-500 mt-1">
-                  {f.fecha}
-                </p>
-
-                <p className="text-xs text-gray-400 mt-2">
-                  {f.vuelo}
-                </p>
-
               </div>
-            ))}
-          </div>
-        </div>
 
-        {/* VUELTA */}
-        {vuelta.length > 0 && (
-          <div>
-            <h4 className="text-sm font-semibold text-[#0F3B4C] mb-3">
-              Vuelta
-            </h4>
+              {/* VUELTA */}
+              {vuelta.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-semibold text-[#0F3B4C] mb-3">
+                    Vuelta
+                  </h4>
 
-            <div className="space-y-3">
-              {vuelta.map((f, i) => (
-                <div
-                  key={i}
-                  className="border rounded-xl p-4 bg-gray-50"
-                >
+                  <div className="space-y-3">
+                    {vuelta.map((f, i) => (
+                      <div
+                        key={i}
+                        className="border rounded-xl p-4 bg-gray-50"
+                      >
 
-                  <p className="text-lg font-semibold text-[#0F3B4C]">
-                    {f.origen} → {f.destino}
-                  </p>
+                        <p className="text-lg font-semibold text-[#0F3B4C]">
+                          {f.origen} → {f.destino}
+                        </p>
 
-                  <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
-                    <span>{f.salida}</span>
-                    <span className="text-gray-300">→</span>
-                    <span>{f.llegada}</span>
+                        <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
+                          <span>{f.salida}</span>
+                          <span className="text-gray-300">→</span>
+                          <span>{f.llegada}</span>
+                        </div>
+
+                        <p className="text-sm text-gray-500 mt-1">
+                          {f.fecha}
+                        </p>
+
+                        <p className="text-xs text-gray-400 mt-2">
+                          {f.vuelo}
+                        </p>
+
+                      </div>
+                    ))}
                   </div>
-
-                  <p className="text-sm text-gray-500 mt-1">
-                    {f.fecha}
-                  </p>
-
-                  <p className="text-xs text-gray-400 mt-2">
-                    {f.vuelo}
-                  </p>
-
                 </div>
-              ))}
+              )}
+
             </div>
-          </div>
-        )}
+          )
+        })()}
 
       </div>
-    )
-  })()}
-
-</div>
 
     </div>
   )
