@@ -94,37 +94,48 @@ export default function HerramientasPage() {
 const [pnrText, setPnrText] = useState('')
 const [parsedFlights, setParsedFlights] = useState<any[]>([])
 
-const parsePNR = () => {
-  const lines = pnrText.split('\n')
+  const parsePNR = () => {
+    const lines = pnrText.split('\n')
 
-  const flights = lines
-    .map(line => {
-      const clean = line.trim().toUpperCase()
+    const flights = lines
+      .map(line => {
+        let clean = line.trim().toUpperCase()
 
-      if (!clean) return null
+        if (!clean) return null
 
-      // 🔥 regex más flexible
-      const match = clean.match(
-        /([A-Z]{2})\s?(\d{2,4}).*?(\d{2}[A-Z]{3}).*?([A-Z]{3})\s([A-Z]{3}).*?(\d{3,4}).*?(\d{3,4}\+?\d?)/
-      )
+        // 🧠 NORMALIZADOR (CLAVE)
+        clean = clean
+          // UX41 → UX 41
+          .replace(/([A-Z]{2})(\d{2,4})/, '$1 $2')
+          // 10JAN → 10JAN (ok pero aseguramos separación)
+          .replace(/(\d{2}[A-Z]{3})/, ' $1 ')
+          // EZE MAD pegado
+          .replace(/([A-Z]{3})([A-Z]{3})/, '$1 $2')
+          // horarios pegados
+          .replace(/(\d{3,4})(\d{3,4}\+?\d?)/, '$1 $2')
 
-      if (!match) return null
+        const match = clean.match(
+          /([A-Z]{2})\s(\d{2,4}).*?(\d{2}[A-Z]{3}).*?([A-Z]{3})\s([A-Z]{3}).*?(\d{3,4}).*?(\d{3,4}\+?\d?)/
+        )
 
-      return {
-        vuelo: `${match[1]} ${match[2]}`,
-        fecha: match[3],
-        origen: match[4],
-        destino: match[5],
-        salida: match[6],
-        llegada: match[7],
-      }
-    })
-    .filter(Boolean)
+        if (!match) return null
 
-  console.log('✈️ flights parsed:', flights)
+        return {
+          vuelo: `${match[1]} ${match[2]}`,
+          fecha: match[3],
+          origen: match[4],
+          destino: match[5],
+          salida: match[6],
+          llegada: match[7],
+        }
+      })
+      .filter(Boolean)
 
-  setParsedFlights(flights)
-}
+    console.log('✈️ parsed:', flights)
+
+    setParsedFlights(flights)
+  }
+
 
 /* =========================
      UI
