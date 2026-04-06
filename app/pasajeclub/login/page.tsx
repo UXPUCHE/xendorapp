@@ -2,19 +2,27 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
+import { useRouter } from 'next/navigation'
 
 export default function Login() {
+  const router = useRouter()
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
 
+  // 🔥 check si ya está logueado
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
+    const checkUser = async () => {
+      const { data } = await supabase.auth.getUser()
+
       if (data.user) {
-        window.location.href = '/admin' // 👈 CAMBIO
+        router.replace('/admin')
       }
-    })
-  }, [])
+    }
+
+    checkUser()
+  }, [router])
 
   const handleLogin = async () => {
     setLoading(true)
@@ -29,7 +37,7 @@ export default function Login() {
     if (error) {
       alert(error.message)
     } else {
-      window.location.href = '/admin' // 👈 CAMBIO
+      router.replace('/admin') // 🔥 limpio y sin reload
     }
   }
 

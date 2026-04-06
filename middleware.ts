@@ -3,11 +3,19 @@ import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
   const host = request.headers.get('host') || ''
+  const url = request.nextUrl
 
-  // 🔥 si entra por subdominio pasajeclub
-if (host.startsWith('pasajeclub.')) {
-  return NextResponse.rewrite(new URL('/pasajeclub/login', request.url))
-}
+  // 👉 si es pasajeclub
+  if (host.startsWith('pasajeclub.')) {
+    const pathname = url.pathname
+
+    // evitar doble prefijo
+    if (!pathname.startsWith('/pasajeclub')) {
+      return NextResponse.rewrite(
+        new URL(`/pasajeclub${pathname}`, request.url)
+      )
+    }
+  }
 
   return NextResponse.next()
 }
