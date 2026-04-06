@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Home from '@/app/components/Home'
+import Breadcrumb from '@/app/components/Breadcrumb'
 import { supabase } from '@/lib/supabase'
 import Toast from '@/app/components/Toast'
 
@@ -102,8 +103,6 @@ const Card = ({ title, children }: any) => (
   </div>
 )
 
-/* COMPONENT */
-
 export default function EditorPage() {
   const { id } = useParams()
   const router = useRouter()
@@ -111,22 +110,20 @@ export default function EditorPage() {
   const [ofertaDraft, setOfertaDraft] = useState<Oferta>(initialState)
   const [uploading, setUploading] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
+  const [saving, setSaving] = useState(false)
 
-  /* AUTO HIDE TOAST */
   useEffect(() => {
     if (!toast) return
     const timer = setTimeout(() => setToast(null), 2500)
     return () => clearTimeout(timer)
   }, [toast])
 
-  /* AUTH */
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (!data.user) window.location.href = '/login'
     })
   }, [])
 
-  /* LOAD DATA */
   useEffect(() => {
     if (!id) return
 
@@ -181,8 +178,10 @@ export default function EditorPage() {
     }))
   }
 
-  /* SAVE */
   const guardarOferta = async () => {
+    if (saving) return
+    setSaving(true)
+
     const { error } = await supabase
       .from('ofertas')
       .update({
@@ -193,10 +192,12 @@ export default function EditorPage() {
 
     if (error) {
       setToast('❌ Error al actualizar')
+      setSaving(false)
       return
     }
 
     setToast('✅ Actualizado correctamente')
+    setSaving(false)
 
     setTimeout(() => {
       router.push('/admin/editar')
@@ -230,19 +231,26 @@ export default function EditorPage() {
   return (
     <div className="grid grid-cols-2 min-h-screen bg-[#F6F8FB]">
 
-      {/* FORM */}
       <div className="p-10 space-y-8 overflow-auto max-w-2xl mx-auto">
+
+        <Breadcrumb
+          items={[
+            { label: 'Admin', href: '/admin' },
+            { label: 'Editar', href: '/admin/editar' },
+            { label: ofertaDraft.destino || 'Paquete' }
+          ]}
+        />
+
+        <button
+          onClick={() => router.push('/admin')}
+          className="text-sm text-[#0f3b4c] mb-2 hover:underline"
+        >
+          ← Volver al panel
+        </button>
 
         <h2 className="text-2xl font-bold text-[#0f3b4c]">
           Editar paquete ✏️
         </h2>
-
-        <button
-          onClick={guardarOferta}
-          className="bg-[#0f3b4c] text-white px-4 py-2 rounded-lg"
-        >
-          Actualizar oferta
-        </button>
 
         {/* BASICO */}
         <Card title="Básico">
@@ -260,7 +268,7 @@ export default function EditorPage() {
               <input
                 type="file"
                 className="hidden"
-                onChange={(e: any) => {
+                onChange={(e:any)=>{
                   const file = e.target.files?.[0]
                   if (file) handleUpload(file)
                 }}
@@ -268,11 +276,7 @@ export default function EditorPage() {
             </label>
           </div>
 
-          <Input
-            label="URL imagen"
-            value={ofertaDraft.imagen || ''}
-            onChange={(e:any)=>update('imagen',e.target.value)}
-          />
+          <Input label="URL imagen" value={ofertaDraft.imagen || ''} onChange={(e:any)=>update('imagen',e.target.value)} />
 
           {ofertaDraft.imagen && (
             <img src={ofertaDraft.imagen} className="h-40 rounded-xl object-cover" />
@@ -304,14 +308,80 @@ export default function EditorPage() {
           </div>
         </Card>
 
+        {/* VUELOS */}
+        <Card title="Vuelos">
+          <div className="grid grid-cols-2 gap-4">
+            <Input type="date" label="Fecha inicio" value={ofertaDraft.fecha_in} onChange={(e:any)=>update('fecha_in',e.target.value)} />
+            <Input type="date" label="Fecha fin" value={ofertaDraft.fecha_out} onChange={(e:any)=>update('fecha_out',e.target.value)} />
+          </div>
+
+          <div className="grid grid-cols-3 gap-4 mt-4">
+            <Input label="Aerolínea" value={ofertaDraft.vuelos.aerolinea || ''} onChange={(e:any)=>setOfertaDraft(prev => ({...prev, vuelos:{...prev.vuelos, aerolinea:e.target.value}}))} />
+            <Input label="Escalas" value={ofertaDraft.vuelos.escalas || ''} onChange={(e:any)=>setOfertaDraft(prev => ({...prev, vuelos:{...prev.vuelos, escalas:e.target.value}}))} />
+
+            <Select label="Equipaje" value={ofertaDraft.vuelos.equipaje || ''} onChange={(e:any)=>setOfertaDraft(prev => ({...prev, vuelos:{...prev.vuelos, equipaje:e.target.value}}))}>
+              <option value="">Seleccionar</option>
+              <option value="mochila">🎒 Solo mochila</option>
+              <option value="carry">👜 Carry + mochila</option>
+              <option value="bodega">🧳 Equipaje en bodega</option>
+            </Select>
+          </div>
+        </Card>
+
+        {/* TRAMOS */}
+        <Card title="Tramos">
+          <p className="text-xs text-gray-400">IDA</p>
+          <div className="grid grid-cols-2 gap-3">
+            <Input label="Origen" value={ofertaDraft.vuelos.tramos[0]?.origen} onChange={(e:any)=>updateVuelo('ida','origen',e.target.value)} />
+            <Input label="Destino" value={ofertaDraft.vuelos.tramos[0]?.destino} onChange={(e:any)=>updateVuelo('ida','destino',e.target.value)} />
+          </div>
+
+          <p className="text-xs text-gray-400 mt-4">VUELTA</p>
+          <div className="grid grid-cols-2 gap-3">
+            <Input label="Origen" value={ofertaDraft.vuelos.tramos[1]?.origen} onChange={(e:any)=>updateVuelo('vuelta','origen',e.target.value)} />
+            <Input label="Destino" value={ofertaDraft.vuelos.tramos[1]?.destino} onChange={(e:any)=>updateVuelo('vuelta','destino',e.target.value)} />
+          </div>
+        </Card>
+
+        {/* SERVICIOS */}
+        <Card title="Servicios">
+          <Select label="Transporte" value={ofertaDraft.servicios.transporte || ''} onChange={(e:any)=>updateServicio('transporte',e.target.value)}>
+            <option value="">Seleccionar</option>
+            <option value="Traslado ida y vuelta">Traslado ida y vuelta</option>
+            <option value="Traslados IN/OUT">Traslados IN/OUT</option>
+            <option value="Sin traslado">Sin traslado</option>
+            <option value="custom">Personalizado</option>
+          </Select>
+
+          <Select label="Asistencia" value={ofertaDraft.servicios.asistencia || ''} onChange={(e:any)=>updateServicio('asistencia',e.target.value)}>
+            <option value="">Seleccionar</option>
+            <option value="Asistencia incluida">Asistencia incluida</option>
+            <option value="Asistencia al viajero">Asistencia al viajero</option>
+            <option value="Sin asistencia">Sin asistencia</option>
+          </Select>
+
+          <Select label="Otros" value={ofertaDraft.servicios.otros || ''} onChange={(e:any)=>updateServicio('otros',e.target.value)}>
+            <option value="">Seleccionar</option>
+            <option value="Post-venta">Post-venta</option>
+            <option value="Atención personalizada">Atención personalizada</option>
+          </Select>
+        </Card>
+
+        {/* BOTÓN FINAL */}
+        <button
+          onClick={guardarOferta}
+          disabled={saving}
+          className="w-full bg-[#0f3b4c] text-white px-4 py-3 rounded-lg disabled:opacity-50"
+        >
+          {saving ? 'Actualizando...' : 'Actualizar oferta'}
+        </button>
+
       </div>
 
-      {/* PREVIEW */}
       <div className="bg-[#F5F5F5] overflow-auto">
         <Home destino={ofertaDraft.destino || 'punta-cana'} overrideOfertas={[ofertaDraft]} />
       </div>
 
-      {/* TOAST */}
       {toast && <Toast message={toast} />}
     </div>
   )

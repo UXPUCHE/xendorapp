@@ -1,7 +1,9 @@
 'use client'
 
 import { useState, useEffect, ChangeEvent } from 'react'
+import { useRouter } from 'next/navigation'
 import Home from '@/app/components/Home'
+import Breadcrumb from '@/app/components/Breadcrumb'
 import { supabase } from '@/lib/supabase'
 import Toast from '@/app/components/Toast'
 
@@ -122,6 +124,8 @@ export default function Dashboard() {
   const [ofertaDraft, setOfertaDraft] = useState<Oferta>(initialState)
   const [uploading, setUploading] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
+  const [saving, setSaving] = useState(false)
+  const router = useRouter()
 
   // 🔐 USER
   const [user, setUser] = useState<any>(null)
@@ -176,7 +180,9 @@ export default function Dashboard() {
     }))
   }
 
-    const guardarOferta = async () => {
+      const guardarOferta = async () => {
+        if (saving) return
+        setSaving(true)
 
       const { data: { user } } = await supabase.auth.getUser()
 
@@ -193,10 +199,12 @@ export default function Dashboard() {
 
       if (error) {
         setToast('Error al guardar ❌')
+        setSaving(false)
         return
       }
 
-     setToast('🚀 Publicado con éxito')
+      setToast('🚀 Publicado con éxito')
+      setSaving(false)
     }
 
   const handleUpload = async (file: File) => {
@@ -219,9 +227,32 @@ export default function Dashboard() {
       {/* LEFT */}
       <div className="p-10 space-y-8 overflow-auto max-w-2xl mx-auto">
 
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-[#0f3b4c]">Configurador</h2>
+      {/* 👇 ACÁ VA */}
+      <Breadcrumb
+        items={[
+          { label: 'Admin', href: '/admin' },
+          { label: 'Crear' }
+        ]}
+      />
 
+      {/* HEADER */}
+      <div className="flex items-center justify-between">
+
+     </div>
+      <div className="flex items-center justify-between">
+
+        <div className="flex flex-col">
+          <button
+            onClick={() => router.push('/admin')}
+            className="text-sm text-[#0f3b4c] mb-1 hover:underline"
+          >
+            ← Volver al panel
+          </button>
+
+          <h2 className="text-2xl font-bold text-[#0f3b4c]">
+            Configurador
+          </h2>
+        </div>
           <div className="flex items-center gap-4">
             <span className="text-sm text-gray-500">
               {user?.email}
@@ -235,10 +266,6 @@ export default function Dashboard() {
             </button>
           </div>
         </div>
-
-        <button onClick={guardarOferta} className="bg-[#0f3b4c] text-white px-4 py-2 rounded-lg hover:opacity-90 transition">
-          Guardar oferta
-        </button>
 
         {/* BASICO */}
         <Card title="Básico">
@@ -420,11 +447,14 @@ export default function Dashboard() {
 
         </Card>
 
-      </div>
+        <button
+          onClick={guardarOferta}
+          disabled={saving}
+          className="w-full bg-[#0f3b4c] text-white px-4 py-2 rounded-lg disabled:opacity-50"
+        >
+          {saving ? 'Guardando...' : 'Guardar oferta'}
+        </button>
 
-      {/* PREVIEW */}
-      <div className="bg-[#F5F5F5] overflow-auto">
-        <Home destino={ofertaDraft.destino || 'punta-cana'} overrideOfertas={[ofertaDraft]} />
       </div>
 
       {/* PREVIEW */}

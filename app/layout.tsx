@@ -1,3 +1,4 @@
+import { GeistSans } from 'geist/font/sans'
 import { Bricolage_Grotesque } from 'next/font/google'
 import './globals.css'
 

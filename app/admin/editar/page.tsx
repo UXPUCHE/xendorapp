@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
+import Breadcrumb from '@/app/components/Breadcrumb'
 import Toast from '@/app/components/Toast'
 
 type Oferta = {
@@ -123,6 +124,20 @@ export default function EditarPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
+
+      <Breadcrumb
+        items={[
+          { label: 'Admin', href: '/admin' },
+          { label: 'Editar' }
+        ]}
+      />
+
+      <button
+        onClick={() => router.push('/admin')}
+        className="text-sm text-[#0f3b4c] mb-2 hover:underline"
+      >
+        ← Volver al panel
+      </button>
 
       <h1 className="text-3xl font-semibold text-[#0F3B4C] mb-6">
         Modificar paquetes ✏️
