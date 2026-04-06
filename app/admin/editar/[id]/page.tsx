@@ -229,28 +229,12 @@ export default function EditorPage() {
   }
 
   return (
-    <div className="grid grid-cols-2 min-h-screen bg-[#F6F8FB]">
 
-      <div className="p-10 space-y-8 overflow-auto max-w-2xl mx-auto">
+      <div className="px-2 space-y-8">
 
-        <Breadcrumb
-          items={[
-            { label: 'Admin', href: '/admin' },
-            { label: 'Editar', href: '/admin/editar' },
-            { label: ofertaDraft.destino || 'Paquete' }
-          ]}
-        />
-
-        <button
-          onClick={() => router.push('/admin')}
-          className="text-sm text-[#0f3b4c] mb-2 hover:underline"
-        >
-          ← Volver al panel
-        </button>
-
-        <h2 className="text-2xl font-bold text-[#0f3b4c]">
+        <h1 className="text-3xl font-semibold text-[#0F3B4C] mb-6">
           Editar paquete ✏️
-        </h2>
+        </h1>
 
         {/* BASICO */}
         <Card title="Básico">
@@ -376,10 +360,18 @@ export default function EditorPage() {
           {saving ? 'Actualizando...' : 'Actualizar oferta'}
         </button>
 
-      </div>
+      {/* PREVIEW */}
+      <div className="mt-10">
+        <h3 className="text-lg font-semibold text-[#0f3b4c] mb-4">
+          Preview
+        </h3>
 
-      <div className="bg-[#F5F5F5] overflow-auto">
-        <Home destino={ofertaDraft.destino || 'punta-cana'} overrideOfertas={[ofertaDraft]} />
+        <div className="rounded-2xl p-6">
+          <Home
+            destino={ofertaDraft.destino || 'punta-cana'}
+            overrideOfertas={[ofertaDraft]}
+          />
+        </div>
       </div>
 
       {toast && <Toast message={toast} />}
