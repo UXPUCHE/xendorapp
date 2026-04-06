@@ -5,9 +5,9 @@ export function middleware(request: NextRequest) {
   const host = request.headers.get('host') || ''
 
   // 🔥 si entra por subdominio pasajeclub
-  if (host.startsWith('pasajeclub.')) {
-    return NextResponse.rewrite(new URL('/pasajeclub', request.url))
-  }
+if (host.startsWith('pasajeclub.')) {
+  return NextResponse.rewrite(new URL('/pasajeclub/login', request.url))
+}
 
   return NextResponse.next()
 }
