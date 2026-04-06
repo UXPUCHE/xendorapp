@@ -1,7 +1,7 @@
 'use client'
 
 import { createRoot } from 'react-dom/client'
-import Home from '@/app/components/Home'
+import Home from '@/app/pasajeclub/components/Home'
 
 function mount() {
   const el = document.getElementById('xendor-root')

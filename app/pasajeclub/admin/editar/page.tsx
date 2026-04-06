@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
-import Breadcrumb from '@/app/components/Breadcrumb'
-import Toast from '@/app/components/Toast'
+import Breadcrumb from '@/app/pasajeclub/components/Breadcrumb'
+import Toast from '@/app/pasajeclub/components/Toast'
 
 type Oferta = {
   external_id: string

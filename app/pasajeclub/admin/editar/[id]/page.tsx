@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import Home from '@/app/components/Home'
-import Breadcrumb from '@/app/components/Breadcrumb'
+import Home from '@/app/pasajeclub/components/Home'
+import Breadcrumb from '@/app/pasajeclub/components/Breadcrumb'
 import { supabase } from '@/lib/supabase'
-import Toast from '@/app/components/Toast'
+import Toast from '@/app/pasajeclub/components/Toast'
 
 type TipoTramo = 'ida' | 'vuelta'
 

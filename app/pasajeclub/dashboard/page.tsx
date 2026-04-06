@@ -2,10 +2,10 @@
 
 import { useState, useEffect, ChangeEvent } from 'react'
 import { useRouter } from 'next/navigation'
-import Home from '@/app/components/Home'
-import Breadcrumb from '@/app/components/Breadcrumb'
+import Home from '@/app/pasajeclub/components/Home'
+import Breadcrumb from '@/app/pasajeclub/components/Breadcrumb'
 import { supabase } from '@/lib/supabase'
-import Toast from '@/app/components/Toast'
+import Toast from '@/app/pasajeclub/components/Toast'
 
 type TipoTramo = 'ida' | 'vuelta'
 
@@ -120,7 +120,7 @@ const Card = ({ title, children }: any) => (
 
 /* COMPONENT */
 
-export default function CrearPage() {
+export default function Dashboard() {
   const [ofertaDraft, setOfertaDraft] = useState<Oferta>(initialState)
   const [uploading, setUploading] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
@@ -222,22 +222,50 @@ export default function CrearPage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="grid grid-cols-2 min-h-screen bg-[#F6F8FB]">
 
       {/* LEFT */}
-      <div className="px-2 space-y-8">
+      <div className="p-10 space-y-8 overflow-auto max-w-2xl mx-auto">
+
+      {/* 👇 ACÁ VA */}
+      <Breadcrumb
+        items={[
+          { label: 'Admin', href: '/admin' },
+          { label: 'Crear' }
+        ]}
+      />
 
       {/* HEADER */}
+      <div className="flex items-center justify-between">
 
+     </div>
       <div className="flex items-center justify-between">
 
         <div className="flex flex-col">
+          <button
+            onClick={() => router.push('/admin')}
+            className="text-sm text-[#0f3b4c] mb-1 hover:underline"
+          >
+            ← Volver al panel
+          </button>
 
-          <h1 className="text-3xl font-semibold text-[#0F3B4C] mb-0">
-            Crear paquete ✈️
-          </h1>
+          <h2 className="text-2xl font-bold text-[#0f3b4c]">
+            Configurador
+          </h2>
         </div>
-     </div>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-gray-500">
+              {user?.email}
+            </span>
+
+            <button
+              onClick={handleLogout}
+              className="text-sm bg-red-500 text-white px-3 py-1 rounded"
+            >
+              Salir
+            </button>
+          </div>
+        </div>
 
         {/* BASICO */}
         <Card title="Básico">
@@ -429,19 +457,10 @@ export default function CrearPage() {
 
       </div>
 
-    {/* PREVIEW */}
-    <div className="mt-10">
-      <h3 className="text-lg font-semibold text-[#0f3b4c] mb-4">
-        Preview
-      </h3>
-
-      <div className="rounded-2xl p-6">
-        <Home
-          destino={ofertaDraft.destino || 'punta-cana'}
-          overrideOfertas={[ofertaDraft]}
-        />
+      {/* PREVIEW */}
+      <div className="bg-[#F5F5F5] overflow-auto">
+        <Home destino={ofertaDraft.destino || 'punta-cana'} overrideOfertas={[ofertaDraft]} />
       </div>
-    </div>
 
       {toast && <Toast message={toast} />}
     </div>
