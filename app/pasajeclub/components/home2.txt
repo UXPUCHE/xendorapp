@@ -579,6 +579,10 @@ return (
           </div>
         )}
 
+        {hotelSeleccionado && (
+          <div className="h-[calc(120px+env(safe-area-inset-bottom))] md:hidden" />
+        )}
+
         {/* DETALLE DEL HOTEL SELECCIONADO */}
         {hotelSeleccionado && (() => {
           const detalles = getDetalles(hotelSeleccionado)
@@ -789,6 +793,65 @@ return (
           )
         })()}
         
+{hotelSeleccionado && (
+  <div className="fixed bottom-0 left-0 w-full z-50 md:hidden animate-slide-up">
+
+    <div className="mx-2 rounded-2xl overflow-hidden bg-white/95 backdrop-blur-md border shadow-[0_-12px_40px_rgba(0,0,0,0.18)] px-4 pt-3 pb-6">
+
+      {/* TOP INFO */}
+      <div className="flex items-center justify-between mb-2">
+
+        <div className="flex flex-col leading-tight">
+          <p className="text-sm text-gray-400">
+            {formatDestino(hotelSeleccionado.destino)} · {formatFecha(fechaSeleccionada?.fecha_inicio || '')}
+          </p>
+
+          <p className="text-lg font-semibold text-[#0F3B4C] truncate max-w-[180px]">
+            {hotelSeleccionado.hotel}
+          </p>
+
+          <span className="text-sm text-[#00A99D] font-medium">
+            ✓ Seleccionado
+          </span>
+        </div>
+
+        {/* PRECIO */}
+        <div className="text-right">
+          <p className="text-sm text-gray-400">Desde</p>
+          <p className="text-3xl font-bold text-[#0F3B4C] leading-none">
+            USD {hotelSeleccionado.precio}
+          </p>
+        </div>
+
+      </div>
+
+      {/* CTA */}
+      <a
+        href={`https://wa.me/5493516678823?text=${encodeURIComponent(
+`Hola! Me interesa este paquete:
+
+• Destino: ${formatDestino(hotelSeleccionado.destino)}
+• Hotel: ${hotelSeleccionado.hotel}
+• Fecha: ${formatFecha(fechaSeleccionada?.fecha_inicio || '')} al ${formatFecha(fechaSeleccionada?.fecha_fin || '')}
+• Plan: ${tipoPlanSeleccionado}
+• Precio: USD ${hotelSeleccionado.precio} por persona
+
+Quiero reservar 👋`
+        )}`}
+        target="_blank"
+        rel="noreferrer"
+        className="block w-full text-center bg-[#0F3B4C] text-white py-3 rounded-xl font-semibold text-sm mt-3 mb-1"
+      >
+        Quiero este viaje
+      </a>
+
+    </div>
+  </div>
+  
+)}
+{hotelSeleccionado && (
+  <div className="h-[200px] md:hidden" />
+)}
       </div>
 
         )
