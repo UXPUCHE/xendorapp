@@ -408,11 +408,11 @@ const getDetalles = (oferta: Oferta | null) => {
 }
 
 return (
-  <div className="react-container bg-[#FFFFFF] py-8 mx-auto px-8 md:px-10">
+  <div className="react-container bg-[#FFFFFF] py-6 mx-auto px-4 md:px-8 lg:px-10">
        
         {/* FECHAS */}
-        <h2 className="text-3xl font-semibold mb-4 text-[#0F3B4C]">Elegí tu fecha</h2>
-        <div className="flex gap-3 mb-10 flex-wrap">
+        <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-[#0F3B4C]">Elegí tu fecha</h2>
+        <div className="flex gap-2 mb-8 flex-wrap md:gap-3 md:mb-10">
           {fechas.map((f, i) => (
             <button
               key={i}
@@ -430,7 +430,7 @@ return (
                   setTipoPlanSeleccionado(planesDisponibles[0])
                 }
               }}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition ${
+              className={`px-4 py-2 md:px-5 md:py-2 text-xs md:text-sm rounded-full font-medium transition ${
                 fechaSeleccionada?.fecha_inicio === f.fecha_inicio
                   ? 'bg-[#0f3b4c] text-white shadow-md'
                   : 'bg-white border border-gray-200 text-[#0F3B4C]'
@@ -444,8 +444,8 @@ return (
         {/* TIPO DE PLAN */}
         {getPlanesGlobales().length > 1 && (
           <>
-            <h2 className="text-3xl font-semibold mb-4 text-[#0F3B4C]">Tipo de plan</h2>
-            <div className="flex gap-3 mb-10 flex-wrap">
+            <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-[#0F3B4C]">Tipo de plan</h2>
+            <div className="flex gap-2 mb-8 flex-wrap md:gap-3 md:mb-10">
               {getPlanesGlobales().map((plan) => {
                 const planesDisponibles = getPlanesPorFecha()
                 const disabled = !planesDisponibles.includes(plan)
@@ -454,7 +454,7 @@ return (
                     key={plan}
                     disabled={disabled}
                     onClick={() => setTipoPlanSeleccionado(plan)}
-                    className={`px-5 py-2 rounded-full text-sm font-medium transition ${
+                    className={`px-4 py-2 md:px-5 md:py-2 text-xs md:text-sm rounded-full font-medium transition ${
                       tipoPlanSeleccionado === plan
                         ? 'bg-[#0f3b4c] text-white shadow-md'
                         : 'bg-white border border-gray-200 text-[#0F3B4C]'
@@ -469,7 +469,7 @@ return (
         )}
 
         {/* HOTELES */}
-        <h2 className="text-3xl font-semibold mb-6 text-[#0F3B4C]">Elegí tu hotel</h2>
+        <h2 className="text-2xl md:text-3xl font-semibold mb-6 text-[#0F3B4C]">Elegí tu hotel</h2>
 
         {ofertasFiltradas.length === 0 ? (
           <div className="text-center text-gray-400 mt-10">
@@ -509,16 +509,15 @@ return (
                   
                 <div
                   key={oferta.external_id}
-                    onClick={() => {
-                      setHotelSeleccionado(oferta)
-                    }}
-                      className={`group cursor-pointer bg-white rounded-2xl overflow-hidden flex gap-4 items-stretch min-h-[180px] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${                    isSelected
-                      ? 'ring-2 ring-[#00A99D]/0 shadow-xl scale-[1.02]'
+                  onClick={() => setHotelSeleccionado(oferta)}
+                  className={`group cursor-pointer bg-white rounded-2xl overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]
+                  flex flex-col md:flex-row ${
+                    isSelected
+                      ? 'ring-2 ring-[#00A99D] shadow-xl'
                       : 'shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:shadow-[0_12px_35px_rgba(0,0,0,0.12)]'
                   }`}
-                  
-                  >
-                    <div className="w-[260px] flex-shrink-0 self-stretch overflow-hidden">
+                >
+                    <div className="w-full h-44 md:w-[260px] md:h-auto flex-shrink-0 overflow-hidden">
                       <img
                         src={oferta.imagen?.trim() || 'https://placehold.co/100x100'}
                         onError={(e) => {
@@ -529,7 +528,7 @@ return (
                       />
                     </div>
 
-                    <div className="flex-1 flex flex-col justify-between py-6">
+                    <div className="flex-1 flex flex-col justify-between p-4 md:py-6">
                       {badges.length > 0 && (
                         <div className="flex gap-2 flex-wrap mb-2">
                           {badges.map((badge, i) => (
@@ -542,8 +541,8 @@ return (
                           ))}
                         </div>
                       )}
-                      <h3 className="text-2xl font-semibold text-[#0F3B4C]">{oferta.hotel}</h3>
-                      <p className="text-base text-gray-500 mt-0">
+                      <h3 className="text-lg md:text-2xl font-semibold text-[#0F3B4C]">{oferta.hotel}</h3>
+                      <p className="text-sm md:text-base text-gray-500 mt-0">
                         {getNoches(oferta.fecha_in, oferta.fecha_out)} noches · {oferta.regimen || 'All inclusive'}
                       </p>
                       <div className="flex items-center gap-2 text-sm">
@@ -559,9 +558,9 @@ return (
                       </div>
                     </div>
 
-                    <div className="text-right flex flex-col items-end justify-center h-full pr-6">
+                    <div className="flex flex-col md:items-end md:text-right justify-center p-4 md:pr-6">
                       <p className="text-base text-gray-500 mb-0 leading-none">Desde</p>
-                      <p className="text-4xl font-bold text-[#0F3B4C] tracking-[-0.02em]">
+                      <p className="text-3xl md:text-4xl font-bold text-[#0F3B4C] tracking-[-0.02em]">
                         USD {oferta.precio}
                       </p>
                       <p className="text-base text-gray-500">
@@ -580,6 +579,10 @@ return (
           </div>
         )}
 
+        {hotelSeleccionado && (
+          <div className="h-[calc(120px+env(safe-area-inset-bottom))] md:hidden" />
+        )}
+
         {/* DETALLE DEL HOTEL SELECCIONADO */}
         {hotelSeleccionado && (() => {
           const detalles = getDetalles(hotelSeleccionado)
@@ -591,7 +594,7 @@ return (
 {/* ITINERARIO DE VUELO */}
 {detalles?.vuelo && (
   <div>
-    <p className="text-3xl font-semibold text-[#0F3B4C] mb-8">Itinerario de vuelo</p>
+    <p className="text-2xl md:text-3xl font-semibold text-[#0F3B4C] mb-8">Itinerario de vuelo</p>
 
     <div className="space-y-4">
 
@@ -624,7 +627,7 @@ return (
 
             {/* ORIGEN */}
           <div className="flex items-center gap-3 w-[80px]">
-            <p className="text-3xl font-bold text-[#0F3B4C] leading-none translate-y-[1px]">
+            <p className="text-2xl md:text-3xl font-bold text-[#0F3B4C] leading-none translate-y-[1px]">
               {detalles.vuelo.ida.split(' → ')[0]}
             </p>
             <div className="w-2 h-2 bg-[#0F6E56] rounded-full" />
@@ -650,7 +653,7 @@ return (
             {/* DESTINO */}
             <div className="flex items-center gap-3 justify-end w-[80px]">
               <div className="w-2 h-2 bg-[#0F6E56] rounded-full" />
-              <p className="text-3xl font-bold text-[#0F3B4C] leading-none translate-y-[1px]">
+              <p className="text-2xl md:text-3xl font-bold text-[#0F3B4C] leading-none translate-y-[1px]">
                 {detalles.vuelo.ida.split(' → ')[1]}
               </p>
             </div>
@@ -709,7 +712,7 @@ return (
 
                 {/* ORIGEN */}
                 <div className="flex items-center gap-3 w-[80px]">
-                  <p className="text-3xl font-bold text-[#0F3B4C] leading-none translate-y-[1px]">
+                  <p className="text-2xl md:text-3xl font-bold text-[#0F3B4C] leading-none translate-y-[1px]">
                     {detalles.vuelo.vuelta.split(' → ')[0]}
                   </p>
                   <div className="w-2 h-2 bg-[#185FA5] rounded-full" />
@@ -735,7 +738,7 @@ return (
                 {/* DESTINO */}
                 <div className="flex items-center gap-3 justify-end w-[80px]">
                   <div className="w-2 h-2 bg-[#185FA5] rounded-full" />
-                  <p className="text-3xl font-bold text-[#0F3B4C] leading-none translate-y-[1px]">
+                  <p className="text-2xl md:text-3xl font-bold text-[#0F3B4C] leading-none translate-y-[1px]">
                     {detalles.vuelo.vuelta.split(' → ')[1]}
                   </p>
                 </div>
@@ -769,99 +772,62 @@ return (
 )}
     {/* SERVICIOS */}
     <div className="mt-10 border-t border-gray-200 pt-8">
-      <p className="text-3xl font-semibold text-[#0F3B4C] mb-3">Transporte</p>
+      <p className="text-2xl md:text-3xl font-semibold text-[#0F3B4C] mb-3">Transporte</p>
       <p className="text-lg text-gray-500">{detalles?.transporte}</p>
     </div>
 
     <div className="mt-10 border-t border-gray-200 pt-8">
-      <p className="text-3xl font-semibold text-[#0F3B4C] mb-3">Asistencia</p>
+      <p className="text-2xl md:text-3xl font-semibold text-[#0F3B4C] mb-3">Asistencia</p>
       <p className="text-lg text-gray-500">{detalles?.asistencia}</p>
     </div>
 
     <div className="mt-10 border-t border-gray-200 pt-8">
-      <p className="text-3xl font-semibold text-[#0F3B4C] mb-3">Otros</p>
+      <p className="text-2xl md:text-3xl font-semibold text-[#0F3B4C] mb-3">Otros</p>
       <p className="text-lg text-gray-500">{detalles?.otros}</p>
     </div>
+
+    
             </div>
+
+            
           )
         })()}
+        
+{hotelSeleccionado && (
+  <div className="fixed bottom-0 left-0 w-full z-50 md:hidden animate-slide-up">
 
-{/* 
-  
-        {hotelSeleccionado && (
-          <div className="mt-12 bg-white p-10 rounded-3xl border border-gray-100 shadow-[0_20px_60px_rgba(0,0,0,0.08)] flex items-center justify-between">
-            <div className="flex items-center gap-6">
-              <div className="w-[4px] h-24 bg-[#0F3B4C] rounded-full" />
-              <div className="flex flex-col leading-none">
-                <p className="text-base text-gray-400">Desde</p>
-                <p className="text-5xl md:text-6xl font-extrabold tracking-[-0.06em] text-[#0F3B4C] -mt-1">
-                  USD {hotelSeleccionado.precio}
-                </p>
-                <p className="text-base text-gray-500">
-                  Por persona en {tipoPlanSeleccionado.toLowerCase()}
-                </p>
-              </div>
-            </div>
-            <div className="text-right">
-              <a
-               href={`https://wa.me/5493516678823?text=${encodeURIComponent(
-`Hola! Me interesa este paquete:
+    <div className="mx-2 rounded-2xl overflow-hidden bg-white/95 backdrop-blur-md border shadow-[0_-12px_40px_rgba(0,0,0,0.18)] px-4 pt-3 pb-6">
 
-• Destino: ${formatDestino(hotelSeleccionado.destino)}
-• Hotel: ${hotelSeleccionado.hotel}
-• Fecha: ${formatFecha(fechaSeleccionada?.fecha_inicio || '')} al ${formatFecha(fechaSeleccionada?.fecha_fin || '')}
-• Plan: ${tipoPlanSeleccionado}
-• Precio: USD ${hotelSeleccionado.precio} por persona
+      {/* TOP INFO */}
+      <div className="flex items-center justify-between mb-2">
 
-• Quiero reservar, ¿me pasás más info?`
-)}`}
+        <div className="flex flex-col leading-tight">
+          <p className="text-sm text-gray-400">
+            {formatDestino(hotelSeleccionado.destino)} · {formatFecha(fechaSeleccionada?.fecha_inicio || '')}
+          </p>
 
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center justify-center bg-[#0F3B4C] hover:bg-[#0c2f3d] text-white px-12 py-2 rounded-full text-lg font-semibold transition-all duration-200 hover:scale-[1.03] active:scale-[0.97] shadow-md hover:shadow-lg"
-              >
-                Reservar
-              </a>
-              <p className="text-xs text-gray-400 mt-3 max-w-xs ml-auto">
-                *Los precios y servicios están sujetos a disponibilidad y modificaciones por parte de los prestadores.
-              </p>
-            </div>
-          </div>
-        )}
-*/}
+          <p className="text-lg font-semibold text-[#0F3B4C] truncate max-w-[180px]">
+            {hotelSeleccionado.hotel}
+          </p>
+
+          <span className="text-sm text-[#00A99D] font-medium">
+            ✓ Seleccionado
+          </span>
+        </div>
+
+        {/* PRECIO */}
+        <div className="text-right">
+          <p className="text-sm text-gray-400">Desde</p>
+          <p className="text-3xl font-bold text-[#0F3B4C] leading-none">
+            USD {hotelSeleccionado.precio}
+          </p>
+        </div>
 
       </div>
 
-
-
-
-/* ESPACIO PARA STICKY
-{hotelSeleccionado && (
-  <div style={{ height: '120px' }} />
-)}
-
-
-{hotelSeleccionado && (
-  <div data-sticky className="fixed bottom-0 left-0 w-full z-50 animate-slide-up">
-          <div className="absolute -top-6 left-0 w-full h-6 bg-gradient-to-t from-white/60 to-transparent pointer-events-none" />
-          <div className="backdrop-blur-md bg-white/85 border border-white/75 rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.15)]">
-            <div className="max-w-5xl mx-auto px-4 py-5 md:py-6 flex items-center justify-between gap-6">
-              <div>
-                <p className="text-sm text-gray-500">
-                  {destino} · {fechaSeleccionada?.fecha_inicio}
-                </p>
-                <p className="text-lg font-semibold text-[#0F3B4C]">{hotelSeleccionado?.hotel}</p>
-                <span className="text-base text-[#00A99D] font-semibold">✓ Seleccionado</span>
-              </div>
-              <div className="flex items-center gap-6 md:gap-10">
-                <div className="text-right flex flex-col items-end leading-tight">
-                  <p className="text-sm text-gray-400 self-start">Desde</p>
-                  <p className="text-2xl md:text-3xl font-extrabold text-[#0F3B4C] leading-none">
-                    USD {hotelSeleccionado?.precio || '—'}
-                  </p>
-                </div>
-                <a
-               href={`https://wa.me/5493516678823?text=${encodeURIComponent(
+      {/* CTA */}
+      <a
+        href={`https://wa.me/5493516678823?text=${encodeURIComponent(
 `Hola! Me interesa este paquete:
 
 • Destino: ${formatDestino(hotelSeleccionado.destino)}
@@ -870,19 +836,23 @@ return (
 • Plan: ${tipoPlanSeleccionado}
 • Precio: USD ${hotelSeleccionado.precio} por persona
 
-• Quiero reservar, ¿me pasás más info?`
-)}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="bg-[#0f3b4c] hover:bg-[#0f3b4c] text-white px-6 py-3 rounded-full text-base font-semibold transition-all duration-200 hover:scale-[1.03] active:scale-[0.97] shadow-md hover:shadow-lg"
-                >
-                  Quiero este viaje
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
+Quiero reservar 👋`
+        )}`}
+        target="_blank"
+        rel="noreferrer"
+        className="block w-full text-center bg-[#0F3B4C] text-white py-3 rounded-xl font-semibold text-sm mt-3 mb-1"
+      >
+        Quiero este viaje
+      </a>
+
+    </div>
+  </div>
+  
 )}
-        */
-  )
+{hotelSeleccionado && (
+  <div className="h-[200px] md:hidden" />
+)}
+      </div>
+
+        )
 }

@@ -55,3 +55,33 @@ body {
 .animate-slide-in {
   animation: slide-in 0.3s ease-out;
 }
+
+.input {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  background: #fff;
+  color: #0F3B4C;
+}
+
+.input::placeholder {
+  color: #6b7280; /* más oscuro */
+  opacity: 1;
+}
+
+@keyframes slideUpFade {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slideUpFade 0.35s ease-out;
+}

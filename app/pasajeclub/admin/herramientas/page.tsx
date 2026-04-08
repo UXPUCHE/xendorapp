@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { parseOfertaTexto } from '@/lib/parserOferta'
 
 const tools = [
   {
@@ -18,10 +19,16 @@ const tools = [
     description: 'Recorte rápido',
     path: '/admin/herramientas/recortar',
   },
+  {
+  title: 'Generador de PDF',
+  description: 'Convertir texto en oferta visual',
+  path: '/admin/herramientas/oferta',
+  },
 ]
 
 export default function HerramientasPage() {
   const router = useRouter()
+  
 
   return (
     <div className="space-y-8">
