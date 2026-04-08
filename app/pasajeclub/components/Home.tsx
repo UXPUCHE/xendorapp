@@ -326,7 +326,7 @@ window.parent.postMessage(
     const index = preciosOrdenados.indexOf(oferta.precio)
     if (index === 0) return '💸 Mejor precio disponible'
     if (index === 1) return '⚡ Se está reservando rápido'
-    if (index === 2) return '✨ Opción recomendada'
+    if (index === 2) return '🔥 Alta demanda en esta fecha'
     return null
   }
 
@@ -513,11 +513,16 @@ return (
                   className={`group cursor-pointer bg-white rounded-2xl overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]
                   flex flex-col md:flex-row ${
                     isSelected
-                      ? 'ring-2 ring-[#00A99D] shadow-xl'
+                      ? 'ring-1 ring-[#0F3B4C]/20 shadow-xl'
                       : 'shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:shadow-[0_12px_35px_rgba(0,0,0,0.12)]'
                   }`}
                 >
-                    <div className="w-full h-44 md:w-[260px] md:h-auto flex-shrink-0 overflow-hidden">
+                    <div className="relative w-full h-44 md:w-[260px] md:h-auto flex-shrink-0 overflow-hidden">
+                    {isSelected && (
+                      <div className="absolute top-3 right-3 bg-[#dbcb3a] text-[#072e40] text-xs px-3 py-1 rounded-full shadow-lg border border-white/30 md:hidden">
+                        ✓ Seleccionado
+                    </div>
+                  )}
                       <img
                         src={oferta.imagen?.trim() || 'https://placehold.co/100x100'}
                         onError={(e) => {
@@ -529,18 +534,24 @@ return (
                     </div>
 
                     <div className="flex-1 flex flex-col justify-between p-4 md:py-6">
-                      {badges.length > 0 && (
-                        <div className="flex gap-2 flex-wrap mb-2">
-                          {badges.map((badge, i) => (
-                            <span
-                              key={i}
-                              className={`inline-block text-xs px-3 py-1 rounded-full font-semibold shadow-xs ${badge.style}`}
-                            >
-                              {badge.text}
-                            </span>
-                          ))}
-                        </div>
-                      )}
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
+
+                    {badges.map((badge, i) => (
+                      <span
+                        key={i}
+                        className={`inline-block text-xs px-3 py-1 rounded-full font-semibold ${badge.style}`}
+                      >
+                        {badge.text}
+                      </span>
+                    ))}
+
+                    {urgency && (
+                      <span className="text-sm text-[#00A99D] font-medium">
+                        {urgency}
+                      </span>
+                    )}
+
+                  </div>
                       <h3 className="text-lg md:text-2xl font-semibold text-[#0F3B4C]">{oferta.hotel}</h3>
                       <p className="text-sm md:text-base text-gray-500 mt-0">
                         {getNoches(oferta.fecha_in, oferta.fecha_out)} noches · {oferta.regimen || 'All inclusive'}
@@ -566,11 +577,10 @@ return (
                       <p className="text-base text-gray-500">
                         Por persona en {tipoPlanSeleccionado.toLowerCase()}
                       </p>
-                      {urgency && (
-                        <p className="text-base mt-2 text-[#00A99D] font-normal">{urgency}</p>
-                      )}
                       {isSelected && (
-                        <span className="mt-2 text-xs font-semibold text-[#00A99D]">✓ Seleccionado</span>
+                        <span className="text-xs text-[#00A99D] hidden md:block">
+                          ✓ Seleccionado
+                        </span>
                       )}
                     </div>
                   </div>
@@ -578,6 +588,7 @@ return (
               })}
           </div>
         )}
+
 
         {/* DETALLE DEL HOTEL SELECCIONADO */}
         {hotelSeleccionado && (() => {
