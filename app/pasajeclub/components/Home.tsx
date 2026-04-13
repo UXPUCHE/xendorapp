@@ -112,7 +112,7 @@ export default function Home({
     const fetchData = async () => {
       const { data } = await supabase
         .from('ofertas')
-        .select('external_id, destino, hotel, fecha_in, fecha_out, precio, pax, regimen, status, badge, imagen, vuelos, servicios')
+        .select('external_id, destino, hotel, fecha_in, fecha_out, precio, pax, regimen, status, badge, imagen, vuelos, servicios, estrellas')
         .eq('status', 'publicado')
 
       const normalizar = (str: string) =>
