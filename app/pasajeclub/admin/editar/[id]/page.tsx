@@ -6,6 +6,7 @@ import Home from '@/app/pasajeclub/components/Home'
 import Breadcrumb from '@/app/pasajeclub/components/Breadcrumb'
 import { supabase } from '@/lib/supabase'
 import Toast from '@/app/pasajeclub/components/Toast'
+import { AIRLINES } from '@/lib/airlines'
 
 type TipoTramo = 'ida' | 'vuelta'
 
@@ -300,7 +301,27 @@ export default function EditorPage() {
           </div>
 
           <div className="grid grid-cols-3 gap-4 mt-4">
-            <Input label="Aerolínea" value={ofertaDraft.vuelos.aerolinea || ''} onChange={(e:any)=>setOfertaDraft(prev => ({...prev, vuelos:{...prev.vuelos, aerolinea:e.target.value}}))} />
+            <Select
+              label="Aerolínea"
+              value={ofertaDraft.vuelos.aerolinea || ''}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                setOfertaDraft(prev => ({
+                  ...prev,
+                  vuelos: {
+                    ...prev.vuelos,
+                    aerolinea: e.target.value,
+                  },
+                }))
+              }
+            >
+              <option value="">Seleccionar aerolínea</option>
+
+              {AIRLINES.map((airline) => (
+                <option key={airline.code} value={airline.code}>
+                  {airline.name}
+                </option>
+              ))}
+            </Select>              
             <Input label="Escalas" value={ofertaDraft.vuelos.escalas || ''} onChange={(e:any)=>setOfertaDraft(prev => ({...prev, vuelos:{...prev.vuelos, escalas:e.target.value}}))} />
 
             <Select label="Equipaje" value={ofertaDraft.vuelos.equipaje || ''} onChange={(e:any)=>setOfertaDraft(prev => ({...prev, vuelos:{...prev.vuelos, equipaje:e.target.value}}))}>

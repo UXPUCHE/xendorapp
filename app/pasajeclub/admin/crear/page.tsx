@@ -6,6 +6,7 @@ import Home from '@/app/pasajeclub/components/Home'
 import Breadcrumb from '@/app/pasajeclub/components/Breadcrumb'
 import { supabase } from '@/lib/supabase'
 import Toast from '@/app/pasajeclub/components/Toast'
+import { AIRLINES } from '@/lib/airlines'
 
 type TipoTramo = 'ida' | 'vuelta'
 
@@ -314,9 +315,33 @@ export default function CrearPage() {
                 {/* INFO GENERAL VUELO 👇 NUEVO */}
                 <div className="grid grid-cols-3 gap-4 mt-4">
 
+                <Select
+                  label="Aerolínea"
+                  value={ofertaDraft.vuelos.aerolinea || ''}
+                  onChange={(e) =>
+                    setOfertaDraft(prev => ({
+                      ...prev,
+                      vuelos: {
+                        ...prev.vuelos,
+                        aerolinea: e.target.value,
+                      },
+                    }))
+                  }
+                >
+                  <option value="">Seleccionar aerolínea</option>
+
+                  {AIRLINES.map((airline) => (
+                    <option key={airline.code} value={airline.code}>
+                      {airline.name}
+                    </option>
+                  ))}
+                  <option value="custom">Otra aerolínea</option>
+                </Select>
+
+                {ofertaDraft.vuelos.aerolinea === 'custom' && (
                   <Input
-                    label="Aerolínea"
-                    placeholder="Ej: LATAM"
+                    label="Aerolínea personalizada"
+                    placeholder="Ej: Arajet"
                     onChange={(e) =>
                       setOfertaDraft(prev => ({
                         ...prev,
@@ -327,6 +352,7 @@ export default function CrearPage() {
                       }))
                     }
                   />
+                )}
 
                   <Input
                     label="Escalas"

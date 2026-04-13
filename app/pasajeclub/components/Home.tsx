@@ -2,31 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import { AIRLINES, getAirlineLogo } from '@/lib/airlines'
 
-const AIRLINE_CODES: Record<string, string> = {
-  'aerolineas argentinas': 'AR',
-  'latam': 'LA',
-  'gol': 'G3',
-  'american airlines': 'AA',
-  'delta': 'DL',
-  'avianca': 'AV',
-  'jet smart': 'JA',
-  'jetsmart': 'JA',
-}
-
-const normalize = (str: string) =>
-  str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-
-const getAirlineLogo = (name?: string | null) => {
-  if (!name) return null
-
-  const key = normalize(name)
-  const code = AIRLINE_CODES[key]
-
-  if (!code) return null
-
-  return `/airlines/${code}.svg`
-}
 
 type HomeProps = {
   destino: string
@@ -609,26 +586,33 @@ return (
         <div className="border rounded-2xl px-5 py-4 bg-gray-50">
 
           {/* LABEL */}
-        <div className="flex items-center gap-3 mb-3">
-          <p className="text-base font-semibold text-[#0F6E56]">IDA</p>
+          <div className="flex items-center gap-3 mb-3">
+            <p className="text-base font-semibold text-[#0F6E56]">IDA</p>
 
-          {detalles?.aerolinea && (
-            <div className="flex items-center gap-2 text-base text-gray-500 leading-none">
-              <span className="text-gray-300">•</span>
+            {detalles?.aerolinea && (() => {
+              const airline = AIRLINES.find(a => a.code === detalles.aerolinea)
+              const logo = getAirlineLogo(detalles.aerolinea)
 
-              {getAirlineLogo(detalles.aerolinea) && (
-                <img
-                  src={getAirlineLogo(detalles.aerolinea)!}
-                  className="h-5 object-contain"
-                  alt={detalles.aerolinea}
-                />
-              )}
+              return (
+                <div className="flex items-center gap-2 text-base text-gray-500 leading-none">
+                  <span className="text-gray-300">•</span>
 
-              <span>{detalles.aerolinea}</span>
-            </div>
-          )}
-        </div>
+                  {logo && (
+                    <img
+                      src={logo}
+                      className="h-5 object-contain"
+                      alt={airline?.name || 'Aerolínea'}
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none'
+                      }}
+                    />
+                  )}
 
+                  <span>{airline?.name || detalles.aerolinea}</span>
+                </div>
+              )
+            })()}
+          </div>
           {/* ROW */}
           <div className="flex items-center w-full h-[40px]">
 
@@ -694,25 +678,33 @@ return (
         <div className="border rounded-2xl px-5 py-4 bg-gray-50">
 
           {/* LABEL */}
-        <div className="flex items-center gap-3 mb-3">
-          <p className="text-base font-semibold text-[#0F6E56]">VUELTA</p>
+          <div className="flex items-center gap-3 mb-3">
+            <p className="text-base font-semibold text-[#0F6E56]">VUELTA</p>
 
-          {detalles?.aerolinea && (
-            <div className="flex items-center gap-2 text-base text-gray-500 leading-none">
-              <span className="text-gray-300">•</span>
+            {detalles?.aerolinea && (() => {
+              const airline = AIRLINES.find(a => a.code === detalles.aerolinea)
+              const logo = getAirlineLogo(detalles.aerolinea)
 
-              {getAirlineLogo(detalles.aerolinea) && (
-                <img
-                  src={getAirlineLogo(detalles.aerolinea)!}
-                  className="h-5 w-auto object-contain"
-                  alt={detalles.aerolinea}
-                />
-              )}
+              return (
+                <div className="flex items-center gap-2 text-base text-gray-500 leading-none">
+                  <span className="text-gray-300">•</span>
 
-              <span>{detalles.aerolinea}</span>
-            </div>
-          )}
-        </div>
+                {logo && (
+                  <img
+                    src={logo}
+                    className="h-5 object-contain"
+                    alt={airline?.name || 'Aerolínea'}
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none'
+                    }}
+                  />
+                )}
+
+                  <span>{airline?.name || detalles.aerolinea}</span>
+                </div>
+              )
+            })()}
+          </div>
 
           {/* ROW */}
               <div className="flex items-center w-full h-[40px]">
