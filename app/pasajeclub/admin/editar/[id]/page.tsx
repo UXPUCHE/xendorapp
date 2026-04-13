@@ -45,6 +45,7 @@ interface Oferta {
   vuelos: Vuelos
   servicios: Servicios
   regimen?: string
+  estrellas?: number
 }
 
 const initialState: Oferta = {
@@ -54,6 +55,7 @@ const initialState: Oferta = {
   fecha_in: '',
   fecha_out: '',
   precio: 0,
+  estrellas: 3,
   pax: 'Base doble',
   status: 'preview',
   imagen: '',
@@ -326,6 +328,22 @@ const handleGeneratePDF = () => {
               <option value="mejor oferta">💸 Mejor oferta</option>
               <option value="últimos">🔥 Últimos cupos</option>
               <option value="descuento">🏷️ Descuento</option>
+            </Select>
+            <Select
+              label="Estrellas"
+              value={ofertaDraft.estrellas || 3}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                setOfertaDraft(prev => ({
+                  ...prev,
+                  estrellas: Number(e.target.value),
+                }))
+              }
+            >
+              <option value={1}>⭐ 1 estrella</option>
+              <option value={2}>⭐⭐ 2 estrellas</option>
+              <option value={3}>⭐⭐⭐ 3 estrellas</option>
+              <option value={4}>⭐⭐⭐⭐ 4 estrellas</option>
+              <option value={5}>⭐⭐⭐⭐⭐ 5 estrellas</option>
             </Select>
           </div>
         </Card>
