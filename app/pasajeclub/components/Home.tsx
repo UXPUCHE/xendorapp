@@ -684,6 +684,7 @@ return (
             {detalles?.aerolinea && (() => {
               const airline = AIRLINES.find(a => a.code === detalles.aerolinea)
               const logo = getAirlineLogo(detalles.aerolinea)
+              
 
               return (
                 <div className="flex items-center gap-2 text-base text-gray-500 leading-none">
@@ -693,7 +694,7 @@ return (
                   <img
                     src={logo}
                     className="h-5 object-contain"
-                    alt={airline?.name || 'Aerolínea'}
+                    alt="Aerolínea"
                     onError={(e) => {
                       e.currentTarget.style.display = 'none'
                     }}
