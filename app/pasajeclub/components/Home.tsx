@@ -457,23 +457,11 @@ return (
           <div className="grid gap-5">
             {[...ofertasFiltradas]
               .sort((a, b) => {
-                const prioridad = (o: Oferta) => {
-                  const badge = o.badge?.toLowerCase() || ''
+                // 1. Estrellas primero (desc)
+                const estrellasDiff = (b.estrellas || 0) - (a.estrellas || 0)
+                if (estrellasDiff !== 0) return estrellasDiff
 
-                  if (badge.includes('recomendado')) return 1
-                  if (badge.includes('mejor oferta')) return 2
-                  if (badge.includes('últimos')) return 3
-                  if (badge.includes('descuento')) return 4
-
-                  if (o.precio === minPrecio) return 5 // automático
-
-                  return 6
-                }
-
-                const diff = prioridad(a) - prioridad(b)
-
-                if (diff !== 0) return diff
-
+                // 2. Precio después (asc)
                 return a.precio - b.precio
               })
               .map((oferta) => {
