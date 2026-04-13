@@ -7,6 +7,7 @@ import Breadcrumb from '@/app/pasajeclub/components/Breadcrumb'
 import { supabase } from '@/lib/supabase'
 import Toast from '@/app/pasajeclub/components/Toast'
 import { AIRLINES } from '@/lib/airlines'
+import html2pdf from 'html2pdf.js'
 
 type TipoTramo = 'ida' | 'vuelta'
 
@@ -105,6 +106,29 @@ const Card = ({ title, children }: any) => (
 )
 
 export default function EditorPage() {
+const handleGeneratePDF = () => {
+  const element = document.getElementById('pdf-content')
+
+  if (!element) return
+
+  html2pdf()
+    .set({
+      margin: 0.5,
+      filename: `oferta-${ofertaDraft.destino || 'viaje'}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+      },
+      jsPDF: {
+        unit: 'in',
+        format: 'a4',
+        orientation: 'portrait',
+      },
+    })
+    .from(element)
+    .save()
+}
   const { id } = useParams()
   const router = useRouter()
 
@@ -268,8 +292,21 @@ export default function EditorPage() {
           )}
 
           <div className="grid grid-cols-4 gap-4">
-            <Input label="Precio" value={ofertaDraft.precio} onChange={(e:any)=>update('precio',Number(e.target.value))} />
+              <Input
+                label="Precio"
+                placeholder="USD 1200"
+                value={ofertaDraft.precio ? ofertaDraft.precio.toLocaleString('es-AR') : ''}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const raw = e.target.value
 
+                  const clean = raw.replace(/\D/g, '')
+
+                  setOfertaDraft(prev => ({
+                    ...prev,
+                    precio: Number(clean),
+                  }))
+                }}
+              />
             <Select label="Base" value={ofertaDraft.pax} onChange={(e:any)=>update('pax',e.target.value)}>
               <option>Base single</option>
               <option>Base doble</option>

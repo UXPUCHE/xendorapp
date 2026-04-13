@@ -119,9 +119,187 @@ const Card = ({ title, children }: any) => (
   </div>
 )
 
+
 /* COMPONENT */
 
 export default function CrearPage() {
+
+const handleGeneratePDF = async () => {
+  const html2pdf = (await import('html2pdf.js')).default
+
+  const element = document.createElement('div')
+
+  // 🔥 FIX IMAGEN (anti cache + CORS)
+  const imageUrl = ofertaDraft.imagen
+    ? ofertaDraft.imagen + '?t=' + Date.now()
+    : 'https://placehold.co/800x400'
+
+  const origenIda = ofertaDraft.vuelos.tramos[0]?.origen || '-'
+  const destinoIda = ofertaDraft.vuelos.tramos[0]?.destino || '-'
+  const origenVuelta = ofertaDraft.vuelos.tramos[1]?.origen || '-'
+  const destinoVuelta = ofertaDraft.vuelos.tramos[1]?.destino || '-'
+
+  element.innerHTML = `
+    <div style="width:800px;font-family:Arial;background:#f4f6f8;color:#0F3B4C;">
+
+      <!-- HERO -->
+      <div style="position:relative;height:340px;overflow:hidden;border-bottom-left-radius:20px;border-bottom-right-radius:20px;">
+
+        <img 
+          src="${imageUrl}" 
+          crossorigin="anonymous"
+          style="width:100%;height:100%;object-fit:cover;"
+        />
+
+        <div style="
+          position:absolute;
+          inset:0;
+          background:linear-gradient(
+            to top, 
+            rgba(0,0,0,0.85), 
+            rgba(0,0,0,0.4)
+          );
+        "></div>
+
+        <div style="
+          position:absolute;
+          bottom:25px;
+          left:25px;
+          color:white;
+        ">
+          <h1 style="margin:0;font-size:34px;font-weight:bold;letter-spacing:-0.5px;">
+            ${ofertaDraft.destino || 'Destino'}
+          </h1>
+
+          <p style="margin:5px 0 0 0;font-size:18px;opacity:0.9;">
+            ${ofertaDraft.hotel || ''}
+          </p>
+        </div>
+
+      </div>
+
+      <!-- CONTENT -->
+      <div style="padding:30px;">
+
+        <!-- PRECIO -->
+        <div style="
+          background:#0F3B4C;
+          color:white;
+          padding:25px;
+          border-radius:16px;
+          text-align:center;
+          margin-bottom:30px;
+        ">
+          <p style="margin:0;font-size:14px;opacity:0.7;">Desde</p>
+
+          <p style="
+            margin:0;
+            font-size:44px;
+            font-weight:bold;
+            letter-spacing:-1px;
+          ">
+            USD ${ofertaDraft.precio || 0}
+          </p>
+
+          <p style="margin:0;font-size:14px;">
+            por persona en ${ofertaDraft.pax}
+          </p>
+        </div>
+
+        <!-- GRID -->
+        <div style="display:flex;gap:20px;">
+
+          <!-- VUELOS -->
+          <div style="
+            flex:1;
+            background:white;
+            padding:20px;
+            border-radius:16px;
+            border:1px solid #e5e7eb;
+          ">
+            <h3 style="margin-top:0;font-size:18px;">✈️ Vuelos</h3>
+
+            <p style="font-size:20px;font-weight:bold;margin:6px 0;">
+              ${origenIda} → ${destinoIda}
+            </p>
+
+            <p style="font-size:20px;font-weight:bold;margin:6px 0;">
+              ${origenVuelta} → ${destinoVuelta}
+            </p>
+
+            <div style="margin-top:10px;font-size:13px;color:#555;">
+              <p style="margin:2px 0;">Aerolínea: ${ofertaDraft.vuelos.aerolinea || '-'}</p>
+              <p style="margin:2px 0;">Equipaje: ${ofertaDraft.vuelos.equipaje || '-'}</p>
+              <p style="margin:2px 0;">Escalas: ${ofertaDraft.vuelos.escalas || '-'}</p>
+            </div>
+          </div>
+
+          <!-- SERVICIOS -->
+          <div style="
+            flex:1;
+            background:white;
+            padding:20px;
+            border-radius:16px;
+            border:1px solid #e5e7eb;
+          ">
+            <h3 style="margin-top:0;font-size:18px;">🏨 Incluye</h3>
+
+            <p style="margin:8px 0;">✔ ${ofertaDraft.servicios.transporte || '-'}</p>
+            <p style="margin:8px 0;">✔ ${ofertaDraft.servicios.asistencia || '-'}</p>
+            <p style="margin:8px 0;">✔ ${ofertaDraft.servicios.otros || '-'}</p>
+          </div>
+
+        </div>
+
+        <!-- CTA -->
+        <div style="
+          margin-top:30px;
+          background:#00A99D;
+          color:white;
+          text-align:center;
+          padding:18px;
+          border-radius:12px;
+          font-weight:bold;
+          font-size:16px;
+        ">
+          Consultar disponibilidad por WhatsApp ✈️
+        </div>
+
+        <!-- FOOTER -->
+        <div style="margin-top:20px;text-align:center;">
+          <p style="font-size:12px;color:#666;">
+            Propuesta sujeta a disponibilidad al momento de la reserva.
+          </p>
+
+          <p style="font-size:12px;color:#999;margin-top:10px;">
+            Pasaje Club ✈️
+          </p>
+        </div>
+
+      </div>
+    </div>
+  `
+
+  document.body.appendChild(element)
+
+  await html2pdf()
+    .set({
+      margin: 0,
+      filename: `oferta-${ofertaDraft.destino || 'viaje'}.pdf`,
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+      },
+      jsPDF: {
+        unit: 'px',
+        format: [800, 1200],
+      },
+    })
+    .from(element)
+    .save()
+
+  document.body.removeChild(element)
+}
   const [ofertaDraft, setOfertaDraft] = useState<Oferta>(initialState)
   const [uploading, setUploading] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
@@ -275,8 +453,19 @@ export default function CrearPage() {
           {ofertaDraft.imagen && <img src={ofertaDraft.imagen} className="h-40 rounded-xl" />}
 
           <div className="grid grid-cols-4 gap-4">
-            <Input label="Precio" placeholder="USD 1200" onChange={(e)=>update('precio',Number(e.target.value))} />
+            <Input
+              label="Precio"
+              placeholder="USD 1200"
+              value={ofertaDraft.precio ? ofertaDraft.precio.toLocaleString('es-AR') : ''}
+              onChange={(e) => {
+                const raw = e.target.value
 
+                // eliminar todo lo que no sea número
+                const clean = raw.replace(/\D/g, '')
+
+                update('precio', Number(clean))
+              }}
+            />
             <Select label="Base" onChange={(e)=>update('pax',e.target.value)}>
               <option>Base single</option>
               <option>Base doble</option>
@@ -452,7 +641,17 @@ export default function CrearPage() {
         >
           {saving ? 'Guardando...' : 'Guardar oferta'}
         </button>
-
+ {/*
+      <button
+        onClick={() => {
+          console.log('CLICK OK')
+          handleGeneratePDF()
+        }}
+        className="relative z-50 w-full bg-[#00A99D] text-white px-4 py-3 rounded-lg mt-3"
+      >
+        Generar PDF
+      </button>
+*/}
       </div>
 
     {/* PREVIEW */}
@@ -462,10 +661,12 @@ export default function CrearPage() {
       </h3>
 
       <div className="rounded-2xl p-6">
-        <Home
-          destino={ofertaDraft.destino || 'punta-cana'}
-          overrideOfertas={[ofertaDraft]}
-        />
+        <div id="pdf-content">
+          <Home
+            destino={ofertaDraft.destino || 'punta-cana'}
+            overrideOfertas={[ofertaDraft]}
+          />
+        </div>
       </div>
     </div>
 
