@@ -44,6 +44,7 @@ interface Oferta {
   imagen?: string
   vuelos: Vuelos | string
   servicios?: Servicios
+  estrellas?: number
 }
 
 interface Fecha {
@@ -534,8 +535,9 @@ return (
                         {getNoches(oferta.fecha_in, oferta.fecha_out)} noches · {oferta.regimen || 'All inclusive'}
                       </p>
                       <div className="flex items-center gap-2 text-sm">
-                        <div className="text-yellow-400">★★★★★</div>
-                        <span className="text-gray-500">5 estrellas</span>
+                        <div className="text-yellow-400">
+                          {'★'.repeat(oferta.estrellas || 3)}
+                        </div>
                       </div>
                       <div className="flex flex-wrap gap-2 mt-3">
                         {['Vuelo', 'Hotel', 'Traslados', 'Asistencia'].map((item) => (
