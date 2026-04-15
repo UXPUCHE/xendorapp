@@ -20,9 +20,10 @@ interface Vuelos {
   tramos: Tramo[]
   clase?: string
   equipaje?: string
-
   aerolinea?: string // 👈 NUEVO
   escalas?: string // 👈 texto libre tipo “1 escala en LIM”
+  escalas_ida?: string
+  escalas_vuelta?: string
 }
 
 interface Servicios {
@@ -62,12 +63,16 @@ const initialState: Oferta = {
   badge: '',
   regimen: 'All inclusive',
   vuelos: {
-  tramos: [
-    { tipo: 'ida', origen: '', destino: '' },
-    { tipo: 'vuelta', origen: '', destino: '' },
-  ],
+    tramos: [
+      { tipo: 'ida', origen: '', destino: '' },
+      { tipo: 'vuelta', origen: '', destino: '' },
+    ],
     clase: '',
     equipaje: '',
+
+    // 👇 NUEVO
+    escalas_ida: '',
+    escalas_vuelta: '',
   },
   servicios: {
     transporte: '',
@@ -558,19 +563,32 @@ const handleGeneratePDF = async () => {
                 )}
 
                   <Input
-                    label="Escalas"
+                    label="Escala ida"
                     placeholder="Ej: 1 escala en Lima"
                     onChange={(e) =>
                       setOfertaDraft(prev => ({
                         ...prev,
                         vuelos: {
                           ...prev.vuelos,
-                          escalas: e.target.value,
+                          escalas_ida: e.target.value,
                         },
                       }))
                     }
                   />
 
+                  <Input
+                    label="Escala vuelta"
+                    placeholder="Ej: Directo"
+                    onChange={(e) =>
+                      setOfertaDraft(prev => ({
+                        ...prev,
+                        vuelos: {
+                          ...prev.vuelos,
+                          escalas_vuelta: e.target.value,
+                        },
+                      }))
+                    }
+                  />
                   <Select
                     label="Equipaje"
                     onChange={(e) =>

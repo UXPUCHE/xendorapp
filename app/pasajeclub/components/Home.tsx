@@ -22,6 +22,8 @@ interface Vuelos {
   equipaje?: string
   aerolinea?: string
   escalas?: string
+  escalas_ida?: string
+  escalas_vuelta?: string
 }
 
 interface Servicios {
@@ -347,17 +349,28 @@ const getDetalles = (oferta: Oferta | null) => {
   const idaTramos = tramos.filter(t => t.tipo === 'ida')
   const vueltaTramos = tramos.filter(t => t.tipo === 'vuelta')
 
-  const getEscalaSimple = (text: string | null | undefined, segmentos: any[]) => {
-    if (text) {
-      const t = text.toLowerCase()
+  const formatEscala = (
+    value: string | null | undefined,
+    segmentos: any[]
+  ) => {
+    if (value) {
+      const v = value.toLowerCase().trim()
 
-      if (t.includes('1')) return '1 escala'
-      if (t.includes('2')) return '2 escalas'
+      // 👉 si es número
+      if (v === '0') return 'Directo'
+      if (v === '1') return '1 escala'
+      if (v === '2') return '2 escalas'
 
-      return '1 escala' // fallback si dice "Lima" por ejemplo
+      // 👉 si es texto tipo "1 escala en Lima"
+      if (v.includes('1')) return '1 escala'
+      if (v.includes('2')) return '2 escalas'
+
+      // 👉 si escribiste algo custom → lo respetamos
+      return value
     }
 
-    const escalas = segmentos.length - 1
+    // 🧠 fallback para ofertas viejas
+    const escalas = (segmentos?.length || 1) - 1
 
     if (escalas <= 0) return 'Directo'
     if (escalas === 1) return '1 escala'
@@ -369,8 +382,8 @@ const getDetalles = (oferta: Oferta | null) => {
       ? {
           ida: `${idaTramos[0]?.origen} → ${idaTramos[idaTramos.length - 1]?.destino}`,
           vuelta: `${vueltaTramos[0]?.origen} → ${vueltaTramos[vueltaTramos.length - 1]?.destino}`,
-          idaInfo: getEscalaSimple(vuelosParsed?.escalas, idaTramos),
-          vueltaInfo: getEscalaSimple(vuelosParsed?.escalas, vueltaTramos),
+          idaInfo: formatEscala(vuelosParsed?.escalas_ida, idaTramos),
+          vueltaInfo: formatEscala(vuelosParsed?.escalas_vuelta, vueltaTramos),
         }
       : null,
 
@@ -641,7 +654,7 @@ return (
           {/* TAGS */}
             <div className="flex gap-2 mt-4">
               <span className="text-sm px-3 py-1 rounded-full bg-[#E6F1FB] text-[#185FA5]">
-                {detalles.vuelo.vueltaInfo}
+                {detalles.vuelo.idaInfo}
               </span>
 
               {detalles?.clase && (
@@ -715,7 +728,7 @@ return (
 
                     {/* TEXTO FUERA DEL FLOW */}
                     <p className="text-base text-gray-600 mt-2 text-center">
-                      {detalles.vuelo.idaInfo /* o vueltaInfo */}
+                      {detalles.vuelo.vueltaInfo}
                     </p>
 
                   </div>
@@ -732,7 +745,7 @@ return (
           {/* TAGS */}
           <div className="flex gap-2 mt-4">
             <span className="text-sm px-3 py-1 rounded-full bg-[#E6F1FB] text-[#185FA5]">
-              {detalles.vuelo.idaInfo}
+              {detalles.vuelo.vueltaInfo}
             </span>
 
             {detalles?.clase && (

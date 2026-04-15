@@ -96,6 +96,59 @@ export default function EditarPage() {
     setUndoTimeout(timeout)
   }
 
+const duplicarOferta = async (oferta: Oferta) => {
+  try {
+    const { data: original, error } = await supabase
+      .from('ofertas')
+      .select('*')
+      .eq('external_id', oferta.external_id)
+      .single()
+
+    if (error || !original) {
+      console.error(error)
+      setToast('Error al duplicar')
+      return
+    }
+
+    const nuevoExternalId = crypto.randomUUID()
+
+    // 🔥 LIMPIO SOLO LOS CAMPOS VÁLIDOS
+      const nuevaOferta = {
+        external_id: nuevoExternalId,
+        destino: original.destino,
+        hotel: original.hotel + ' (copia)',
+        precio: original.precio,
+        fecha_in: original.fecha_in,
+        fecha_out: original.fecha_out,
+        pax: original.pax,
+        vuelos: original.vuelos // 👈 ESTE FALTABA
+      }
+
+    const { error: insertError } = await supabase
+      .from('ofertas')
+      .insert(nuevaOferta)
+
+    if (insertError) {
+      console.error(insertError)
+      setToast('Error al duplicar')
+      return
+    }
+
+    setOfertas(prev => [
+      {
+        ...nuevaOferta
+      },
+      ...prev
+    ])
+
+    setToast('Duplicado ✨')
+
+  } catch (err) {
+    console.error(err)
+    setToast('Error inesperado')
+  }
+}
+
   // 🔄 UNDO
   const handleUndo = () => {
     if (!pendingDelete) return
@@ -158,23 +211,32 @@ export default function EditarPage() {
             </div>
 
             <div className="flex items-center gap-3">
-              <span className="text-xl font-bold text-[#0F3B4C]">
-                USD {o.precio}
-              </span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xl font-bold text-[#0F3B4C]">
+                    USD {o.precio}
+                  </span>
 
-              <button
-                onClick={() => router.push(`/admin/editar/${o.external_id}`)}
-                className="bg-[#0F3B4C] text-white px-4 py-2 rounded-full text-sm font-semibold"
-              >
-                Editar
-              </button>
+                  <button
+                    onClick={() => router.push(`/admin/editar/${o.external_id}`)}
+                    className="bg-[#0F3B4C] text-white px-4 py-2 rounded-full text-sm font-semibold"
+                  >
+                    Editar
+                  </button>
 
-              <button
-                onClick={() => openDeleteModal(o)}
-                className="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold"
-              >
-                Eliminar
-              </button>
+                  <button
+                    onClick={() => duplicarOferta(o)}
+                    className="bg-gray-200 text-[#0F3B4C] px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-300 transition"
+                  >
+                    Duplicar
+                  </button>
+
+                  <button
+                    onClick={() => openDeleteModal(o)}
+                    className="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold"
+                  >
+                    Eliminar
+                  </button>
+                </div>
             </div>
           </div>
         ))}
