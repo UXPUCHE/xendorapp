@@ -13,6 +13,7 @@ type Oferta = {
   precio: number
   fecha_in?: string
   fecha_out?: string
+  status?: string
 }
 
 export default function EditarPage() {
@@ -26,6 +27,8 @@ export default function EditarPage() {
   const [pendingDelete, setPendingDelete] = useState<Oferta | null>(null)
   const [undoTimeout, setUndoTimeout] = useState<NodeJS.Timeout | null>(null)
 
+  const [view, setView] = useState<'activos' | 'eliminados'>('activos')
+
   const router = useRouter()
 
   const formatDate = (date?: string) => {
@@ -37,19 +40,19 @@ export default function EditarPage() {
     })
   }
 
-  useEffect(() => {
-    const fetchData = async () => {
+    useEffect(() => {
+      const fetchData = async () => {
       const { data, error } = await supabase
         .from('ofertas')
-        .select('external_id, destino, hotel, precio, fecha_in, fecha_out')
+        .select('external_id, destino, hotel, precio, fecha_in, fecha_out, status')
         .order('precio', { ascending: true })
 
       if (!error && data) setOfertas(data)
       else console.error(error)
-    }
+      }
 
-    fetchData()
-  }, [])
+      fetchData()
+    }, [])
 
   // 🗑️ abrir modal
   const openDeleteModal = (oferta: Oferta) => {
@@ -154,11 +157,52 @@ const duplicarOferta = async (oferta: Oferta) => {
 
     setToast('Duplicado ✨')
 
-  } catch (err) {
+  }
+  
+  catch (err) {
     console.error(err)
     setToast('Error inesperado')
   }
+
 }
+
+    const restaurarOferta = async (oferta: Oferta) => {
+      const { error } = await supabase
+        .from('ofertas')
+        .update({ status: 'publicado' })
+        .eq('external_id', oferta.external_id)
+
+      if (error) {
+        console.error(error)
+        setToast('❌ Error al restaurar')
+        return
+      }
+
+      setOfertas(prev =>
+        prev.filter(o => o.external_id !== oferta.external_id)
+      )
+
+      setToast('Restaurado ✅')
+    }
+
+    const eliminarDefinitivo = async (oferta: Oferta) => {
+      const { error } = await supabase
+        .from('ofertas')
+        .delete()
+        .eq('external_id', oferta.external_id)
+
+      if (error) {
+        console.error(error)
+        setToast('❌ Error al eliminar')
+        return
+      }
+
+      setOfertas(prev =>
+        prev.filter(o => o.external_id !== oferta.external_id)
+      )
+
+      setToast('Eliminado definitivamente 💀')
+    }
 
   // 🔄 UNDO
   const handleUndo = () => {
@@ -182,9 +226,15 @@ const duplicarOferta = async (oferta: Oferta) => {
     return () => clearTimeout(timer)
   }, [toast])
 
-  const ofertasFiltradas = ofertas.filter((o) =>
-    o.destino?.toLowerCase().includes(filtro.toLowerCase())
-  )
+    const ofertasFiltradas = ofertas
+      .filter((o) =>
+        view === 'activos'
+          ? o.status !== 'eliminado'
+          : o.status === 'eliminado'
+      )
+      .filter((o) =>
+        o.destino?.toLowerCase().includes(filtro.toLowerCase())
+      )
 
   return (
     <div className="px-2 space-y-8">
@@ -192,6 +242,30 @@ const duplicarOferta = async (oferta: Oferta) => {
       <h1 className="text-3xl font-semibold text-[#0F3B4C] mb-6">
         Modificar paquetes ✏️
       </h1>
+
+      <div className="flex gap-2 mb-4">
+        <button
+          onClick={() => setView('activos')}
+          className={`px-4 py-2 rounded-full text-sm font-semibold ${
+            view === 'activos'
+              ? 'bg-[#0F3B4C] text-white'
+              : 'bg-gray-200 text-[#0F3B4C]'
+          }`}
+        >
+          Activos
+        </button>
+
+        <button
+          onClick={() => setView('eliminados')}
+          className={`px-4 py-2 rounded-full text-sm font-semibold ${
+            view === 'eliminados'
+              ? 'bg-red-500 text-white'
+              : 'bg-gray-200 text-[#0F3B4C]'
+          }`}
+        >
+          Papelera
+        </button>
+      </div>
 
       <input
         type="text"
@@ -227,26 +301,46 @@ const duplicarOferta = async (oferta: Oferta) => {
                     USD {o.precio}
                   </span>
 
-                  <button
-                    onClick={() => router.push(`/admin/editar/${o.external_id}`)}
-                    className="bg-[#0F3B4C] text-white px-4 py-2 rounded-full text-sm font-semibold"
-                  >
-                    Editar
-                  </button>
+          {view === 'activos' ? (
+            <>
+              <button
+                onClick={() => router.push(`/admin/editar/${o.external_id}`)}
+                className="bg-[#0F3B4C] text-white px-4 py-2 rounded-full text-sm font-semibold"
+              >
+                Editar
+              </button>
 
-                  <button
-                    onClick={() => duplicarOferta(o)}
-                    className="bg-gray-200 text-[#0F3B4C] px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-300 transition"
-                  >
-                    Duplicar
-                  </button>
+              <button
+                onClick={() => duplicarOferta(o)}
+                className="bg-gray-200 text-[#0F3B4C] px-4 py-2 rounded-full text-sm font-semibold"
+              >
+                Duplicar
+              </button>
 
-                  <button
-                    onClick={() => openDeleteModal(o)}
-                    className="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold"
-                  >
-                    Eliminar
-                  </button>
+              <button
+                onClick={() => openDeleteModal(o)}
+                className="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold"
+              >
+                Eliminar
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => restaurarOferta(o)}
+                className="bg-green-500 text-white px-4 py-2 rounded-full text-sm font-semibold"
+              >
+                Restaurar
+              </button>
+
+              <button
+                onClick={() => eliminarDefinitivo(o)}
+                className="bg-black text-white px-4 py-2 rounded-full text-sm font-semibold"
+              >
+                Eliminar definitivo
+              </button>
+            </>
+          )}
                 </div>
             </div>
           </div>
