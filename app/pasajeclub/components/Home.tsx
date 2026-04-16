@@ -66,6 +66,7 @@ export default function Home({
   const [fechaSeleccionada, setFechaSeleccionada] = useState<Fecha | null>(null)
   const [hotelSeleccionado, setHotelSeleccionado] = useState<Oferta | null>(null)
   const [tipoPlanSeleccionado, setTipoPlanSeleccionado] = useState('Base doble')
+  const [sortBy, setSortBy] = useState<'precio-asc' | 'precio-desc' | 'estrellas'>('precio-asc')
 
   // ✅ ÚNICO useEffect de resize (EL BUENO)
       useEffect(() => {
@@ -229,6 +230,22 @@ window.parent.postMessage(
 
     return 6
   }
+
+    const ordenarOfertas = (ofertas: Oferta[]) => {
+      switch (sortBy) {
+        case 'precio-asc':
+          return [...ofertas].sort((a, b) => a.precio - b.precio)
+
+        case 'precio-desc':
+          return [...ofertas].sort((a, b) => b.precio - a.precio)
+
+        case 'estrellas':
+          return [...ofertas].sort((a, b) => (b.estrellas || 0) - (a.estrellas || 0))
+
+        default:
+          return ofertas
+      }
+    }
 
     const getBadges = (oferta: Oferta | null): { text: string; style: string }[] => {
       if (!oferta) return []
@@ -475,24 +492,35 @@ return (
         )}
 
         {/* HOTELES */}
-        <h2 className="text-2xl md:text-3xl font-semibold mb-6 text-[#0F3B4C]">Elegí tu hotel</h2>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-3">
 
-        {ofertasFiltradas.length === 0 ? (
+              <h2 className="text-2xl md:text-3xl font-semibold text-[#0F3B4C]">
+                Elegí tu hotel
+              </h2>
+
+              <div className="flex items-center gap-2 justify-start md:justify-end">
+                <span className="text-sm text-gray-500">Ordenar por:</span>
+
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as any)}
+                  className="px-3 py-2 rounded-lg border border-gray-200 text-sm text-[#0F3B4C] bg-white focus:outline-none"
+                >
+                  <option value="precio-asc">Menor precio</option>
+                  <option value="precio-desc">Mayor precio</option>
+                  <option value="estrellas">Categoría</option>
+                </select>
+              </div>
+
+            </div> 
+
+     {ofertasFiltradas.length === 0 ? (
           <div className="text-center text-gray-400 mt-10">
             No hay opciones disponibles para este plan en esta fecha.
           </div>
         ) : (
           <div className="grid gap-5">
-            {[...ofertasFiltradas]
-              .sort((a, b) => {
-                // 1. Estrellas primero (desc)
-                const estrellasDiff = (b.estrellas || 0) - (a.estrellas || 0)
-                if (estrellasDiff !== 0) return estrellasDiff
-
-                // 2. Precio después (asc)
-                return a.precio - b.precio
-              })
-              .map((oferta) => {
+              {ordenarOfertas(ofertasFiltradas).map((oferta) => {
                 const isSelected = hotelSeleccionado?.hotel === oferta.hotel
                 const badges = getBadges(oferta)
                 const mainBadge = badges[0] || null
