@@ -28,8 +28,11 @@ interface Vuelos {
 
 interface Servicios {
   transporte?: string
+  transporteCustom?: string
   asistencia?: string
+  asistenciaCustom?: string
   otros?: string
+  otrosCustom?: string 
 }
 
 interface Oferta {
@@ -76,8 +79,11 @@ const initialState: Oferta = {
   },
   servicios: {
     transporte: '',
+    transporteCustom: '',
     asistencia: '',
+    asistenciaCustom: '',
     otros: '',
+    otrosCustom: '',
   },
 }
 
@@ -372,8 +378,26 @@ const handleGeneratePDF = async () => {
 
       const { data: { user } } = await supabase.auth.getUser()
 
+      const serviciosFinal = {
+        ...ofertaDraft.servicios,
+          transporte:
+          ofertaDraft.servicios.transporte === 'custom'
+            ? ofertaDraft.servicios.transporteCustom
+            : ofertaDraft.servicios.transporte,
+
+          asistencia:
+            ofertaDraft.servicios.asistencia === 'custom'
+              ? ofertaDraft.servicios.asistenciaCustom
+              : ofertaDraft.servicios.asistencia,
+          otros:
+            ofertaDraft.servicios.otros === 'custom'
+              ? ofertaDraft.servicios.otrosCustom
+              : ofertaDraft.servicios.otros,
+      }
+
       const { data, error } = await supabase.from('ofertas').insert([{
         ...ofertaDraft,
+        servicios: serviciosFinal, // 👈 importante
         created_by: user?.id, // ✅ ESTE ES EL FIX
         badge: ofertaDraft.badge || null,
         destino: ofertaDraft.destino.toLowerCase().replace(/\s+/g, '-'),
@@ -603,7 +627,7 @@ const handleGeneratePDF = async () => {
                   >
                     <option value="">Seleccionar</option>
                     <option value="mochila">🎒 Solo mochila</option>
-                    <option value="carry">👜 Carry + mochila</option>
+                    <option value="carry">👜 Carry on + mochila</option>
                     <option value="bodega">🧳 Equipaje en bodega</option>
                   </Select>
 
@@ -638,9 +662,21 @@ const handleGeneratePDF = async () => {
           </Select>
 
           {ofertaDraft.servicios.transporte === 'custom' && (
-            <Input placeholder="Ej: traslado privado VIP" label="Personalizado" onChange={(e)=>updateServicio('transporte',e.target.value)} />
+            <Input
+              label="Personalizado"
+              placeholder="Ej: traslado privado VIP"
+              value={ofertaDraft.servicios.transporteCustom || ''}
+              onChange={(e:any) =>
+                setOfertaDraft(prev => ({
+                  ...prev,
+                  servicios: {
+                    ...prev.servicios,
+                    transporteCustom: e.target.value,
+                  }
+                }))
+              }
+            />
           )}
-
           <Select label="Asistencia" onChange={(e)=>updateServicio('asistencia',e.target.value)}>
             <option value="">Seleccionar</option>
             <option value="Asistencia incluida">Asistencia incluida</option>
@@ -650,7 +686,20 @@ const handleGeneratePDF = async () => {
           </Select>
 
           {ofertaDraft.servicios.asistencia === 'custom' && (
-            <Input placeholder="Ej: Assist Card 150k" label="Personalizado" onChange={(e)=>updateServicio('asistencia',e.target.value)} />
+            <Input
+              label="Personalizado"
+              placeholder="Ej: Assist Card 150k"
+              value={ofertaDraft.servicios.asistenciaCustom || ''}
+              onChange={(e:any) =>
+                setOfertaDraft(prev => ({
+                  ...prev,
+                  servicios: {
+                    ...prev.servicios,
+                    asistenciaCustom: e.target.value,
+                  }
+                }))
+              }
+            />
           )}
 
           <Select label="Otros" onChange={(e)=>updateServicio('otros',e.target.value)}>
@@ -661,7 +710,20 @@ const handleGeneratePDF = async () => {
           </Select>
 
           {ofertaDraft.servicios.otros === 'custom' && (
-            <Input placeholder="Ej: upgrades, beneficios..." label="Personalizado" onChange={(e)=>updateServicio('otros',e.target.value)} />
+            <Input
+              label="Personalizado"
+              placeholder="Ej: upgrades, beneficios..."
+              value={ofertaDraft.servicios.otrosCustom || ''}
+              onChange={(e:any) =>
+                setOfertaDraft(prev => ({
+                  ...prev,
+                  servicios: {
+                    ...prev.servicios,
+                    otrosCustom: e.target.value, // 👈 YA NO TOCA "otros"
+                  }
+                }))
+              }
+            />
           )}
 
         </Card>

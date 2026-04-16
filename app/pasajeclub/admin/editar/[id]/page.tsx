@@ -29,8 +29,11 @@ interface Vuelos {
 
 interface Servicios {
   transporte?: string
+  transporteCustom?: string
   asistencia?: string
+  asistenciaCustom?: string
   otros?: string
+  otrosCustom?: string
 }
 
 interface Oferta {
@@ -76,8 +79,11 @@ const initialState: Oferta = {
   },
   servicios: {
     transporte: '',
+    transporteCustom: '',
     asistencia: '',
+    asistenciaCustom: '',
     otros: '',
+    otrosCustom: '',
   },
 }
 
@@ -186,7 +192,36 @@ const handleGeneratePDF = () => {
           },
           servicios: {
             ...initialState.servicios,
-            ...data.servicios,
+
+            transporte:
+              ['Traslado ida y vuelta', 'Traslados IN/OUT', 'Sin traslado'].includes(data.servicios?.transporte)
+                ? data.servicios?.transporte
+                : 'custom',
+
+            transporteCustom:
+              ['Traslado ida y vuelta', 'Traslados IN/OUT', 'Sin traslado'].includes(data.servicios?.transporte)
+                ? ''
+                : data.servicios?.transporte || '',
+
+            asistencia:
+              ['Asistencia incluida', 'Asistencia al viajero', 'Sin asistencia'].includes(data.servicios?.asistencia)
+                ? data.servicios?.asistencia
+                : 'custom',
+
+            asistenciaCustom:
+              ['Asistencia incluida', 'Asistencia al viajero', 'Sin asistencia'].includes(data.servicios?.asistencia)
+                ? ''
+                : data.servicios?.asistencia || '',
+
+            otros:
+              ['Post-venta', 'Atención personalizada'].includes(data.servicios?.otros)
+                ? data.servicios?.otros
+                : 'custom',
+
+            otrosCustom:
+              ['Post-venta', 'Atención personalizada'].includes(data.servicios?.otros)
+                ? ''
+                : data.servicios?.otros || '',
           },
         })
       }
@@ -421,7 +456,7 @@ const handleGeneratePDF = () => {
             <Select label="Equipaje" value={ofertaDraft.vuelos.equipaje || ''} onChange={(e:any)=>setOfertaDraft(prev => ({...prev, vuelos:{...prev.vuelos, equipaje:e.target.value}}))}>
               <option value="">Seleccionar</option>
               <option value="mochila">🎒 Solo mochila</option>
-              <option value="carry">👜 Carry + mochila</option>
+              <option value="carry">👜 Carry on + mochila</option>
               <option value="bodega">🧳 Equipaje en bodega</option>
             </Select>
           </div>
@@ -452,18 +487,68 @@ const handleGeneratePDF = () => {
             <option value="custom">Personalizado</option>
           </Select>
 
+          {ofertaDraft.servicios.transporte === 'custom' && (
+              <Input
+                label="Personalizado"
+                value={ofertaDraft.servicios.transporteCustom || ''}
+                onChange={(e:any) =>
+                  setOfertaDraft(prev => ({
+                    ...prev,
+                    servicios: {
+                      ...prev.servicios,
+                      transporteCustom: e.target.value,
+                    }
+                  }))
+                }
+              />
+            )}
+
           <Select label="Asistencia" value={ofertaDraft.servicios.asistencia || ''} onChange={(e:any)=>updateServicio('asistencia',e.target.value)}>
             <option value="">Seleccionar</option>
             <option value="Asistencia incluida">Asistencia incluida</option>
             <option value="Asistencia al viajero">Asistencia al viajero</option>
             <option value="Sin asistencia">Sin asistencia</option>
+            <option value="custom">Personalizado</option>
           </Select>
+
+          {ofertaDraft.servicios.asistencia === 'custom' && (
+              <Input
+                label="Personalizado"
+                value={ofertaDraft.servicios.asistenciaCustom || ''}
+                onChange={(e:any) =>
+                  setOfertaDraft(prev => ({
+                    ...prev,
+                    servicios: {
+                      ...prev.servicios,
+                      asistenciaCustom: e.target.value,
+                    }
+                  }))
+                }
+              />
+            )}
 
           <Select label="Otros" value={ofertaDraft.servicios.otros || ''} onChange={(e:any)=>updateServicio('otros',e.target.value)}>
             <option value="">Seleccionar</option>
             <option value="Post-venta">Post-venta</option>
             <option value="Atención personalizada">Atención personalizada</option>
+            <option value="custom">Personalizado</option>
           </Select>
+
+          {ofertaDraft.servicios.otros === 'custom' && (
+            <Input
+              label="Personalizado"
+              value={ofertaDraft.servicios.otrosCustom || ''}
+              onChange={(e:any) =>
+                setOfertaDraft(prev => ({
+                  ...prev,
+                  servicios: {
+                    ...prev.servicios,
+                    otrosCustom: e.target.value,
+                  }
+                }))
+              }
+            />
+          )}
         </Card>
 
         {/* BOTÓN FINAL */}

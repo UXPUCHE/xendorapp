@@ -346,6 +346,21 @@ const getDetalles = (oferta: Oferta | null) => {
   const tramos = vuelosParsed?.tramos || []
   const servicios = oferta.servicios || {}
 
+  const transporte =
+    servicios.transporte === 'custom'
+      ? (servicios as any).transporteCustom || 'Traslado ida y vuelta'
+      : servicios.transporte || 'Traslado ida y vuelta'
+
+  const asistencia =
+    servicios.asistencia === 'custom'
+      ? (servicios as any).asistenciaCustom || 'Asistencia incluida'
+      : servicios.asistencia || 'Asistencia incluida'
+
+  const otros =
+    servicios.otros === 'custom'
+      ? (servicios as any).otrosCustom || 'Post-venta'
+      : servicios.otros || 'Post-venta'
+
   const idaTramos = tramos.filter(t => t.tipo === 'ida')
   const vueltaTramos = tramos.filter(t => t.tipo === 'vuelta')
 
@@ -391,9 +406,9 @@ const getDetalles = (oferta: Oferta | null) => {
     equipaje: vuelosParsed?.equipaje || null,
     aerolinea: vuelosParsed?.aerolinea || null,
     escalas: vuelosParsed?.escalas || null,
-    transporte: servicios?.transporte || 'Traslado ida y vuelta',
-    asistencia: servicios?.asistencia || 'Asistencia incluida',
-    otros: servicios?.otros || 'Post-venta',
+    transporte,
+    asistencia,
+    otros,
   }
 
 }
@@ -666,7 +681,7 @@ return (
               {detalles?.equipaje && (
                 <span className="text-xs px-3 py-1 rounded-full border text-gray-500">
                   {detalles?.equipaje === 'mochila' && '🎒 Mochila'}
-                  {detalles?.equipaje === 'carry' && '👜 Carry + mochila'}
+                  {detalles?.equipaje === 'carry' && '👜 Carry on + mochila'}
                   {detalles?.equipaje === 'bodega' && '🧳 Equipaje en bodega'}
                 </span>
               )}
