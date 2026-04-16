@@ -1,5 +1,3 @@
-console.log('EDITAR PAGE CARGADA')
-
 'use client'
 
 import { useEffect, useState } from 'react'
