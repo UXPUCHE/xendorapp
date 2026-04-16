@@ -40,7 +40,6 @@ export default function EditarPage() {
     })
   }
 
-    useEffect(() => {
       const fetchData = async () => {
       const { data, error } = await supabase
         .from('ofertas')
@@ -49,10 +48,12 @@ export default function EditarPage() {
 
       if (!error && data) setOfertas(data)
       else console.error(error)
-      }
+    }
 
-      fetchData()
-    }, [])
+
+      useEffect(() => {
+        fetchData()
+      }, [])
 
   // 🗑️ abrir modal
   const openDeleteModal = (oferta: Oferta) => {
@@ -67,27 +68,27 @@ export default function EditarPage() {
   }
 
   // 🧨 DELETE CON UNDO
-  const eliminarOferta = async () => {
-    if (!selectedOferta) return
+const eliminarOferta = async () => {
+  if (!selectedOferta) return
 
-    setLoadingDelete(true)
+  setLoadingDelete(true)
 
-    // 1. cerrar modal
-    closeModal()
+  // 1. cerrar modal
+  closeModal()
 
-    // 2. eliminar visualmente
-    setOfertas(prev =>
-      prev.filter(o => o.external_id !== selectedOferta.external_id)
-    )
+  // ❌ ELIMINAMOS ESTO (NO MÁS estado local manual)
+  // setOfertas(prev =>
+  //   prev.filter(o => o.external_id !== selectedOferta.external_id)
+  // )
 
-    // 3. guardar backup
-    setPendingDelete(selectedOferta)
+  // 2. guardar backup
+  setPendingDelete(selectedOferta)
 
-    // 4. toast con undo
-    setToast('🗑️ Eliminado')
+  // 3. toast con undo
+  setToast('🗑️ Eliminado')
 
-    // 5. delete real con delay
-    const timeout = setTimeout(async () => {
+  // 4. delete real con delay
+  const timeout = setTimeout(async () => {
     const { data, error } = await supabase
       .from('ofertas')
       .update({ status: 'eliminado' })
@@ -97,18 +98,24 @@ export default function EditarPage() {
     console.log('DATA:', data)
     console.log('ERROR:', error)
 
-      if (error) {
-        console.error(error)
-        setToast('❌ Error al mover a papelera')
-        return
-      }
-      console.log('SOFT DELETE RUNNING')
-      setPendingDelete(null)
-      console.log('UPDATE EJECUTADO')
-    }, 4000)
+    if (error) {
+      console.error(error)
+      setToast('❌ Error al mover a papelera')
+      return
+    }
 
-    setUndoTimeout(timeout)
-  }
+    console.log('SOFT DELETE RUNNING')
+
+    await fetchData() // 👈 clave
+
+    setPendingDelete(null)
+
+    console.log('UPDATE EJECUTADO')
+  }, 4000)
+
+  setUndoTimeout(timeout)
+}
+
 
 const duplicarOferta = async (oferta: Oferta) => {
   try {
@@ -182,6 +189,8 @@ const duplicarOferta = async (oferta: Oferta) => {
         prev.filter(o => o.external_id !== oferta.external_id)
       )
 
+      await fetchData()
+
       setToast('Restaurado ✅')
     }
 
@@ -201,6 +210,8 @@ const duplicarOferta = async (oferta: Oferta) => {
         prev.filter(o => o.external_id !== oferta.external_id)
       )
 
+      await fetchData()
+      
       setToast('Eliminado definitivamente 💀')
     }
 
