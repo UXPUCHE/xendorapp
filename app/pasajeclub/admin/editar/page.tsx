@@ -1,3 +1,5 @@
+console.log('EDITAR PAGE CARGADA')
+
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -85,12 +87,23 @@ export default function EditarPage() {
 
     // 5. delete real con delay
     const timeout = setTimeout(async () => {
-      await supabase
-        .from('ofertas')
-        .delete()
-        .eq('external_id', selectedOferta.external_id)
+    const { data, error } = await supabase
+      .from('ofertas')
+      .update({ status: 'eliminado' })
+      .eq('external_id', selectedOferta.external_id)
+      .select()
 
+    console.log('DATA:', data)
+    console.log('ERROR:', error)
+
+      if (error) {
+        console.error(error)
+        setToast('❌ Error al mover a papelera')
+        return
+      }
+      console.log('SOFT DELETE RUNNING')
       setPendingDelete(null)
+      console.log('UPDATE EJECUTADO')
     }, 4000)
 
     setUndoTimeout(timeout)
