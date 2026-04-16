@@ -356,16 +356,16 @@ const getDetalles = (oferta: Oferta | null) => {
     if (value) {
       const v = value.toLowerCase().trim()
 
-      // 👉 si es número
-      if (v === '0') return 'Directo'
-      if (v === '1') return '1 escala'
-      if (v === '2') return '2 escalas'
+      // 👉 extrae número aunque venga como "3 escalas" o "3 en Lima"
+      const num = parseInt(v.replace(/\D/g, ''))
 
-      // 👉 si es texto tipo "1 escala en Lima"
-      if (v.includes('1')) return '1 escala'
-      if (v.includes('2')) return '2 escalas'
+      if (!isNaN(num)) {
+        if (num === 0) return 'Directo'
+        if (num === 1) return '1 escala'
+        return `${num} escalas`
+      }
 
-      // 👉 si escribiste algo custom → lo respetamos
+      // 👉 texto custom (ej: "escala en Lima")
       return value
     }
 

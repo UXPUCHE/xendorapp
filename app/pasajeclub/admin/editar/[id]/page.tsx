@@ -23,6 +23,8 @@ interface Vuelos {
   equipaje?: string
   aerolinea?: string
   escalas?: string
+  escalas_ida?: string
+  escalas_vuelta?: string
 }
 
 interface Servicios {
@@ -68,6 +70,9 @@ const initialState: Oferta = {
     ],
     clase: '',
     equipaje: '',
+
+    escalas_ida: '',
+    escalas_vuelta: '',
   },
   servicios: {
     transporte: '',
@@ -162,12 +167,22 @@ const handleGeneratePDF = () => {
         .single()
 
       if (data) {
+
+        // 👇 👉 ESTO TE FALTA (ACÁ VA)
+        const vuelosParsed =
+          typeof data.vuelos === 'string'
+            ? JSON.parse(data.vuelos)
+            : data.vuelos
+
         setOfertaDraft({
           ...initialState,
           ...data,
           vuelos: {
             ...initialState.vuelos,
-            ...data.vuelos,
+            ...vuelosParsed,
+
+            escalas_ida: vuelosParsed?.escalas_ida ?? vuelosParsed?.escalas ?? '',
+            escalas_vuelta: vuelosParsed?.escalas_vuelta ?? vuelosParsed?.escalas ?? '',
           },
           servicios: {
             ...initialState.servicios,
@@ -178,7 +193,6 @@ const handleGeneratePDF = () => {
 
       if (error) console.error(error)
     }
-
     fetchOferta()
   }, [id])
 
@@ -377,8 +391,33 @@ const handleGeneratePDF = () => {
                 </option>
               ))}
             </Select>              
-            <Input label="Escalas" value={ofertaDraft.vuelos.escalas || ''} onChange={(e:any)=>setOfertaDraft(prev => ({...prev, vuelos:{...prev.vuelos, escalas:e.target.value}}))} />
+              <Input
+                label="Escala ida"
+                value={ofertaDraft.vuelos.escalas_ida || ''}
+                onChange={(e:any) =>
+                  setOfertaDraft(prev => ({
+                    ...prev,
+                    vuelos: {
+                      ...prev.vuelos,
+                      escalas_ida: e.target.value,
+                    },
+                  }))
+                }
+              />
 
+              <Input
+                label="Escala vuelta"
+                value={ofertaDraft.vuelos.escalas_vuelta || ''}
+                onChange={(e:any) =>
+                  setOfertaDraft(prev => ({
+                    ...prev,
+                    vuelos: {
+                      ...prev.vuelos,
+                      escalas_vuelta: e.target.value,
+                    },
+                  }))
+                }
+              />
             <Select label="Equipaje" value={ofertaDraft.vuelos.equipaje || ''} onChange={(e:any)=>setOfertaDraft(prev => ({...prev, vuelos:{...prev.vuelos, equipaje:e.target.value}}))}>
               <option value="">Seleccionar</option>
               <option value="mochila">🎒 Solo mochila</option>
