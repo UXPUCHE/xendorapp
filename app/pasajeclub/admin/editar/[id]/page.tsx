@@ -254,16 +254,69 @@ const handleGeneratePDF = () => {
     }))
   }
 
+              const guardarComoDraft = async () => {
+              if (saving) return
+              setSaving(true)
+
+              const { error } = await supabase
+                .from('ofertas')
+                .update({
+                  ...ofertaDraft,
+                  badge: ofertaDraft.badge || null,
+                  status: 'draft',
+                })
+                .eq('external_id', id)
+
+              if (error) {
+                setToast('❌ Error al guardar borrador')
+                setSaving(false)
+                return
+              }
+
+              setToast('💾 Guardado como borrador')
+              setSaving(false)
+            }
+
+            const publicarOferta = async () => {
+                  if (saving) return
+                  setSaving(true)
+
+                  const { error } = await supabase
+                    .from('ofertas')
+                    .update({
+                      ...ofertaDraft,
+                      badge: ofertaDraft.badge || null,
+                      status: 'publicado',
+                    })
+                    .eq('external_id', id)
+
+                  if (error) {
+                    setToast('❌ Error al publicar')
+                    setSaving(false)
+                    return
+                  }
+
+                  setToast('🚀 Publicado correctamente')
+                  setSaving(false)
+
+                  setTimeout(() => {
+                    router.push('/admin/editar')
+                  }, 800)
+                }
+
   const guardarOferta = async () => {
     if (saving) return
     setSaving(true)
 
     const { error } = await supabase
       .from('ofertas')
-      .update({
-        ...ofertaDraft,
-        badge: ofertaDraft.badge || null,
-      })
+        .update({
+          ...ofertaDraft,
+          badge: ofertaDraft.badge || null,
+
+          // 👇 CONTROLAMOS NOSOTROS
+          status: 'publicado',
+        })
       .eq('external_id', id)
 
     if (error) {
@@ -308,9 +361,17 @@ const handleGeneratePDF = () => {
 
       <div className="px-2 space-y-8">
 
-        <h1 className="text-3xl font-semibold text-[#0F3B4C] mb-6">
+      <div className="mb-6 space-y-1">
+
+        <h1 className="text-3xl font-semibold text-[#0F3B4C]">
           Editar paquete ✏️
         </h1>
+
+        <p className="text-sm text-gray-500">
+          Estado: <strong className="capitalize">{ofertaDraft.status}</strong>
+        </p>
+
+      </div>
 
         {/* BASICO */}
         <Card title="Básico">
@@ -552,13 +613,25 @@ const handleGeneratePDF = () => {
         </Card>
 
         {/* BOTÓN FINAL */}
-        <button
-          onClick={guardarOferta}
-          disabled={saving}
-          className="w-full bg-[#0f3b4c] text-white px-4 py-3 rounded-lg disabled:opacity-50"
-        >
-          {saving ? 'Actualizando...' : 'Actualizar oferta'}
-        </button>
+          <div className="flex gap-3">
+
+            <button
+              onClick={guardarComoDraft}
+              disabled={saving}
+              className="w-full bg-gray-200 text-[#0F3B4C] px-4 py-3 rounded-lg"
+            >
+              💾 Guardar borrador
+            </button>
+
+            <button
+              onClick={publicarOferta}
+              disabled={saving}
+              className="w-full bg-[#0f3b4c] text-white px-4 py-3 rounded-lg"
+            >
+              🚀 Publicar
+            </button>
+
+          </div>
 
       {/* PREVIEW */}
       <div className="mt-10">
