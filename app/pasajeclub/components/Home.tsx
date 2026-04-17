@@ -68,7 +68,7 @@ export default function Home({
   const [tipoPlanSeleccionado, setTipoPlanSeleccionado] = useState('Base doble')
   const [sortBy, setSortBy] = useState<'precio-asc' | 'precio-desc' | 'estrellas'>('precio-asc')
 
-  // ✅ ÚNICO useEffect de resize (EL BUENO)
+  // ✅ ÚNICO useEffect de resize (EL BUEnO)
       useEffect(() => {
         const sendHeight = () => {
           const height = document.documentElement.scrollHeight
