@@ -71,7 +71,7 @@ export default function Home({
   // ✅ ÚNICO useEffect de resize (EL BUENO)
       useEffect(() => {
         const sendHeight = () => {
-          const height = document.body.scrollHeight
+          const height = document.documentElement.scrollHeight
 
           window.parent.postMessage(
             {
