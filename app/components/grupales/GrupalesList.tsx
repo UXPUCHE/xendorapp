@@ -14,19 +14,19 @@ type Grupal = {
   precio_desde?: number
 }
 
-export default function GrupalesList({ data }: { data: Grupal[] }) {
+type Props = {
+  data: Grupal[]
+}
+
+export default function GrupalesList({ data }: Props) {
   return (
     <div className="w-full">
-      
-      {/* CONTENEDOR SCROLL */}
       <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
-        
         {data.map((item) => (
           <div key={item.slug} className="snap-start">
             <CardGrupal data={item} />
           </div>
         ))}
-
       </div>
     </div>
   )

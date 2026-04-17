@@ -1,5 +1,8 @@
 'use client'
 
+'use client'
+
+import type { FC } from 'react'
 import CardGrupal from './CardGrupal'
 
 type Grupal = {
@@ -14,11 +17,17 @@ type Grupal = {
   precio_desde?: number
 }
 
-export default function GrupalesGrid({ data }: { data: Grupal[] }) {
+type Props = {
+  data: Grupal[]
+}
+
+const Card: FC<{ data: Grupal }> = CardGrupal
+
+export default function GrupalesGrid({ data }: Props) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {data.map((item) => (
-        <CardGrupal key={item.slug} data={item} />
+        <Card key={item.slug} data={item} />
       ))}
     </div>
   )

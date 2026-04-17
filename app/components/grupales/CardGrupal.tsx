@@ -1,6 +1,8 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import FiltrosGrupales from './FiltrosGrupales'
+import GrupalesGrid from '@/app/components/grupales/GrupalesGrid'
 
 type Grupal = {
   slug: string
@@ -14,103 +16,47 @@ type Grupal = {
   precio_desde?: number
 }
 
-export default function CardGrupal({ data }: { data: Grupal }) {
-  const router = useRouter()
+const mockData: Grupal[] = [
+  {
+    slug: 'peru-gastronomico',
+    titulo: 'Perú Gastronómico',
+    fecha_inicio: '2026-08-06',
+    fecha_fin: '2026-08-10',
+    imagen: 'https://images.unsplash.com/photo-1526406915894-7bcd65f60845',
+    estado: 'activo',
+    tipo: 'mixto',
+    subtitulo: 'Acompañado por Ale',
+    precio_desde: 1890,
+  },
+]
 
-  const isSoldOut = data.estado === 'sold_out'
+export default function GrupalesPage() {
+  const filtros = [
+    { label: 'Todos', value: 'all' },
+    { label: 'Mujeres', value: 'mujeres' },
+    { label: 'Mixtos', value: 'mixto' },
+    { label: 'Proveedores', value: 'proveedor' },
+  ]
 
-  const color =
-    data.tipo === 'mujeres'
-      ? 'bg-[#8B1E3F]'
-      : 'bg-[#0F3B4C]'
+  const [filtroActivo, setFiltroActivo] = useState('all')
 
-  const handleClick = () => {
-    if (!isSoldOut) {
-      router.push(`/grupales/${data.slug}`)
-    }
-  }
-
-  const formatFecha = (fecha: string) => {
-    return new Date(fecha + 'T00:00:00').toLocaleDateString('es-AR', {
-      day: 'numeric',
-      month: 'short',
-    }).toUpperCase()
-  }
+  const dataFiltrada = mockData.filter((item: any) => {
+    if (filtroActivo === 'all') return true
+    if (filtroActivo === 'mujeres') return item.tipo === 'mujeres'
+    if (filtroActivo === 'mixto') return item.tipo === 'mixto'
+    if (filtroActivo === 'proveedor') return false
+    return true
+  })
 
   return (
-    <div
-      onClick={handleClick}
-      className={`w-full rounded-2xl overflow-hidden shadow-md cursor-pointer transition hover:shadow-xl ${
-        isSoldOut ? 'opacity-70 cursor-not-allowed' : ''
-      }`}
-    >
-      {/* IMAGEN */}
-      <div className="relative h-[240px] w-full">
-        <img
-          src={data.imagen}
-          alt={data.titulo}
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            e.currentTarget.src = 'https://placehold.co/600x400?text=Pasaje+Club'
-          }}
-        />
+    <>
+      <FiltrosGrupales
+        filtros={filtros}
+        activo={filtroActivo}
+        onChange={setFiltroActivo}
+      />
 
-        {/* MUJERES BADGE */}
-        {data.tipo === 'mujeres' && (
-          <div className="absolute bottom-3 right-3 w-[70px] h-[70px] rounded-full overflow-hidden shadow-lg border-2 border-white">
-            <img
-              src="/badge-mujeres.png"
-              alt="Salida de mujeres"
-              className="w-full h-full object-cover"
-            />
-          </div>
-        )}
-
-        {/* BADGE */}
-        {data.tipo === 'mixto' && (
-          <div className="absolute top-3 right-3 bg-white text-[#0F3B4C] text-xs px-3 py-1 rounded-full shadow-md">
-            Grupal
-          </div>
-        )}
-      </div>
-
-      {/* CONTENIDO */}
-      <div className="bg-white p-5 space-y-2">
-        {/* FECHA */}
-        <p className="text-xs text-gray-400 uppercase">
-          {formatFecha(data.fecha_inicio)} - {formatFecha(data.fecha_fin)}
-        </p>
-
-        {/* TITULO */}
-        <h3 className="text-xl font-semibold text-[#0F3B4C] leading-tight">
-          {data.titulo}
-        </h3>
-
-        {/* SUBTITULO */}
-        {data.subtitulo && (
-          <p className="text-sm text-gray-500">
-            {data.subtitulo}
-          </p>
-        )}
-
-        {/* PRECIO */}
-        {data.precio_desde && (
-          <p className="text-base font-semibold text-[#0F3B4C]">
-            Desde USD {data.precio_desde}
-          </p>
-        )}
-
-        {/* CTA */}
-        <button
-          className={`w-full mt-4 py-3 rounded-full text-base font-semibold ${
-            isSoldOut
-              ? 'bg-gray-300 text-white'
-              : `${color} text-white`
-          }`}
-        >
-          {isSoldOut ? 'SOLD OUT' : 'ME INTERESA'}
-        </button>
-      </div>
-    </div>
+      <GrupalesGrid data={dataFiltrada} />
+    </>
   )
 }
