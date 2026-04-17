@@ -1,4 +1,4 @@
-import GrupalesList from '@/app/components/grupales/GrupalesList'
+import GrupalesGrid from '@/app/components/grupales/GrupalesGrid'
 
 type Grupal = {
   slug: string
@@ -48,12 +48,8 @@ const mockData: Grupal[] = [
 
 export default function Page() {
   return (
-    <div className="px-4 py-10 space-y-6">
-      <h1 className="text-3xl font-semibold text-[#0F3B4C]">
-        Grupales pasajeclub
-      </h1>
-
-      <GrupalesList data={mockData} />
+    <div className="max-w-7xl mx-auto px-4 py-10">
+      <GrupalesGrid data={mockData} />
     </div>
   )
 }
