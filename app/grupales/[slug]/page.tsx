@@ -1,6 +1,7 @@
 'use client'
 
 import { useParams } from 'next/navigation'
+import { useEffect } from 'react'
 
 const mockData = [
   {
@@ -32,6 +33,29 @@ const mockData = [
 export default function DetalleGrupal() {
   const params = useParams()
   const slug = params.slug as string
+
+  // ✅ 🔥 RESIZE IGUAL QUE CONFIGURADOR
+  useEffect(() => {
+    const sendHeight = () => {
+      const height = document.body.scrollHeight
+
+      window.parent.postMessage(
+        {
+          type: "resize",
+          height
+        },
+        "*"
+      )
+    }
+
+    const observer = new ResizeObserver(sendHeight)
+
+    observer.observe(document.documentElement)
+
+    sendHeight()
+
+    return () => observer.disconnect()
+  }, [])
 
   const data = mockData.find((item) => item.slug === slug)
 
@@ -77,26 +101,22 @@ export default function DetalleGrupal() {
       {/* CONTENIDO */}
       <div className="max-w-5xl mx-auto px-4 py-10 space-y-6">
 
-        {/* SUBTITULO */}
         {data.subtitulo && (
           <p className="text-lg text-gray-600">
             {data.subtitulo}
           </p>
         )}
 
-        {/* PRECIO */}
         {data.precio_desde && (
           <p className="text-2xl font-semibold text-[#0F3B4C]">
             Desde USD {data.precio_desde}
           </p>
         )}
 
-        {/* DESCRIPCIÓN */}
         <p className="text-gray-600 leading-relaxed">
           {data.descripcion}
         </p>
 
-        {/* CTA */}
         <button className="mt-6 bg-[#0F3B4C] text-white px-6 py-3 rounded-full font-semibold">
           Consultar por WhatsApp
         </button>
