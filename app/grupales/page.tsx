@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import GrupalesGrid from '@/app/components/grupales/GrupalesGrid'
 import FiltrosGrupales from '@/app/components/grupales/FiltrosGrupales'
 
@@ -122,6 +122,28 @@ export default function Page() {
     if (filtroActivo === 'proveedor') return false
     return true
   })
+
+  useEffect(() => {
+    const sendHeight = () => {
+      const height = document.documentElement.scrollHeight
+
+      window.parent.postMessage(
+        {
+          type: 'resize',
+          height,
+        },
+        '*'
+      )
+    }
+
+    const observer = new ResizeObserver(sendHeight)
+
+    observer.observe(document.documentElement)
+
+    sendHeight()
+
+    return () => observer.disconnect()
+  }, [dataFiltrada])
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">

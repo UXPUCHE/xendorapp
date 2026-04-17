@@ -67,7 +67,7 @@ export default function CardGrupal({ data }: { data: Grupal }) {
         </div>
 
         {/* CONTENIDO */}
-        <div className="bg-white p-5 space-y-2">
+        <div className="bg-white p-5 space-y-1">
           {/* FECHA */}
           <p className="text-xs text-gray-500 uppercase tracking-wide">
             {formatFecha(data.fecha_inicio)} al {formatFecha(data.fecha_fin)}
@@ -80,7 +80,7 @@ export default function CardGrupal({ data }: { data: Grupal }) {
 
           {/* SUBTITULO */}
           {data.subtitulo && (
-            <p className="text-sm text-gray-600 uppercase tracking-wide">
+            <p className="text-sm text-gray-500 uppercase tracking-normal">
               {data.subtitulo}
             </p>
           )}
