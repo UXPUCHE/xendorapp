@@ -1,38 +1,46 @@
 'use client'
 
-export type Filtro = {
+type Filtro = {
   label: string
   value: string
 }
 
-export default function FiltrosGrupales({
-  filtros,
-  activo,
-  onChange,
-}: {
+type Props = {
   filtros: Filtro[]
   activo: string
   onChange: (value: string) => void
-}) {
-  return (
-    <div className="flex flex-wrap gap-2 mb-8">
-      {filtros.map((f) => {
-        const isActive = activo === f.value
+}
 
-        return (
-          <button
-            key={f.value}
-            onClick={() => onChange(f.value)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition ${
-              isActive
-                ? 'bg-[#0F3B4C] text-white'
-                : 'border border-[#0F3B4C] text-[#0F3B4C] hover:bg-[#0F3B4C]/10'
-            }`}
-          >
-            {f.label}
-          </button>
-        )
-      })}
+export default function FiltrosGrupales({ filtros, activo, onChange }: Props) {
+  return (
+    <div className="flex justify-center mb-10">
+      <div className="w-full max-w-7xl">
+        <div className="flex justify-center gap-6 border-b border-gray-200">
+          {filtros.map((filtro) => {
+            const isActive = activo === filtro.value
+
+            return (
+              <button
+                key={filtro.value}
+                onClick={() => onChange(filtro.value)}
+                className={`
+                  relative pb-3 text-md font-medium transition-all duration-200
+                  ${
+                    isActive
+                      ? 'text-[#0F3B4C]'
+                      : 'text-gray-400 hover:text-[#0F3B4C]'
+                  }
+                `}
+              >
+                {filtro.label}
+                {isActive && (
+                  <span className="absolute left-0 -bottom-[1px] h-[2px] w-full bg-[#0F3B4C] transition-all duration-300 scale-x-100 origin-left" />
+                )}
+              </button>
+            )
+          })}
+        </div>
+      </div>
     </div>
   )
 }

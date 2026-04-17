@@ -1,4 +1,8 @@
+'use client'
+
+import { useState } from 'react'
 import GrupalesGrid from '@/app/components/grupales/GrupalesGrid'
+import FiltrosGrupales from '@/app/components/grupales/FiltrosGrupales'
 
 type Grupal = {
   slug: string
@@ -102,9 +106,32 @@ const mockData: Grupal[] = [
 ]
 
 export default function Page() {
+  const filtros = [
+    { label: 'Todos', value: 'all' },
+    { label: 'Mujeres', value: 'mujeres' },
+    { label: 'Mixtos', value: 'mixto' },
+    { label: 'Proveedores', value: 'proveedor' },
+  ]
+
+  const [filtroActivo, setFiltroActivo] = useState('all')
+
+  const dataFiltrada = mockData.filter((item) => {
+    if (filtroActivo === 'all') return true
+    if (filtroActivo === 'mujeres') return item.tipo === 'mujeres'
+    if (filtroActivo === 'mixto') return item.tipo === 'mixto'
+    if (filtroActivo === 'proveedor') return false
+    return true
+  })
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
-      <GrupalesGrid data={mockData} />
+      <FiltrosGrupales
+        filtros={filtros}
+        activo={filtroActivo}
+        onChange={setFiltroActivo}
+      />
+
+      <GrupalesGrid data={dataFiltrada} />
     </div>
   )
 }
