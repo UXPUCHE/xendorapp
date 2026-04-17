@@ -123,36 +123,27 @@ export default function Page() {
     return true
   })
 
-useEffect(() => {
-  const sendHeight = () => {
-    // 🔥 hack: fuerza recalculo
-    document.body.style.height = 'auto'
+      useEffect(() => {
+        const sendHeight = () => {
+          const height = document.body.scrollHeight
 
-    const height = Math.max(
-      document.body.scrollHeight,
-      document.documentElement.scrollHeight
-    )
+          window.parent.postMessage(
+            {
+              type: "resize",
+              height
+            },
+            "*"
+          )
+        }
 
-    window.parent.postMessage(
-      {
-        type: "resize",
-        height
-      },
-      "*"
-    )
-  }
+        const observer = new ResizeObserver(sendHeight)
 
-  const observer = new ResizeObserver(sendHeight)
-  observer.observe(document.documentElement)
+        observer.observe(document.documentElement)
 
-  // 🔥 clave: delay para capturar cambios de React
-  const timeout = setTimeout(sendHeight, 100)
+        sendHeight()
 
-  return () => {
-    observer.disconnect()
-    clearTimeout(timeout)
-  }
-}, [])
+        return () => observer.disconnect()
+      }, [])
 
 
   return (
