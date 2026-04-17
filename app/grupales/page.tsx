@@ -123,27 +123,31 @@ export default function Page() {
     return true
   })
 
-  useEffect(() => {
+    useEffect(() => {
     const sendHeight = () => {
-      const height = document.documentElement.scrollHeight
+        const height = document.documentElement.scrollHeight
 
-      window.parent.postMessage(
+        window.parent.postMessage(
         {
-          type: 'resize',
-          height,
+            type: 'resize',
+            height,
         },
         '*'
-      )
+        )
     }
 
     const observer = new ResizeObserver(sendHeight)
-
     observer.observe(document.documentElement)
 
+    // 👇 IMPORTANTE: doble disparo
     sendHeight()
+    const timeout = setTimeout(sendHeight, 150)
 
-    return () => observer.disconnect()
-  }, [dataFiltrada])
+    return () => {
+        observer.disconnect()
+        clearTimeout(timeout)
+    }
+    }, [dataFiltrada])
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
