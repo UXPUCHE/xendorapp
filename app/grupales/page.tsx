@@ -123,31 +123,37 @@ export default function Page() {
     return true
   })
 
-    useEffect(() => {
-    const sendHeight = () => {
-        const height = document.documentElement.scrollHeight
+useEffect(() => {
+  const sendHeight = () => {
+    // 🔥 hack: fuerza recalculo
+    document.body.style.height = 'auto'
 
-        window.parent.postMessage(
-        {
-            type: 'resize',
-            height,
-        },
-        '*'
-        )
-    }
+    const height = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight
+    )
 
-    const observer = new ResizeObserver(sendHeight)
-    observer.observe(document.documentElement)
+    window.parent.postMessage(
+      {
+        type: "resize",
+        height
+      },
+      "*"
+    )
+  }
 
-    // 👇 IMPORTANTE: doble disparo
-    sendHeight()
-    const timeout = setTimeout(sendHeight, 150)
+  const observer = new ResizeObserver(sendHeight)
+  observer.observe(document.documentElement)
 
-    return () => {
-        observer.disconnect()
-        clearTimeout(timeout)
-    }
-    }, [dataFiltrada])
+  // 🔥 clave: delay para capturar cambios de React
+  const timeout = setTimeout(sendHeight, 100)
+
+  return () => {
+    observer.disconnect()
+    clearTimeout(timeout)
+  }
+}, [])
+
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
