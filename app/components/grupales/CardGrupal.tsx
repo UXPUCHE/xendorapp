@@ -33,8 +33,8 @@ export default function CardGrupal({ data }: { data: Grupal }) {
   const formatFecha = (fecha: string) => {
     return new Date(fecha + 'T00:00:00').toLocaleDateString('es-AR', {
       day: 'numeric',
-      month: 'long',
-    })
+      month: 'short',
+    }).toUpperCase()
   }
 
   return (
@@ -55,10 +55,23 @@ export default function CardGrupal({ data }: { data: Grupal }) {
           }}
         />
 
+        {/* MUJERES BADGE */}
+        {data.tipo === 'mujeres' && (
+          <div className="absolute bottom-3 right-3 w-[70px] h-[70px] rounded-full overflow-hidden shadow-lg border-2 border-white">
+            <img
+              src="/badge-mujeres.png"
+              alt="Salida de mujeres"
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
+
         {/* BADGE */}
-        <div className="absolute top-3 right-3 bg-white text-[#0F3B4C] text-xs px-3 py-1 rounded-full shadow-md">
-          {data.tipo === 'mujeres' ? 'Solo mujeres' : 'Grupal'}
-        </div>
+        {data.tipo === 'mixto' && (
+          <div className="absolute top-3 right-3 bg-white text-[#0F3B4C] text-xs px-3 py-1 rounded-full shadow-md">
+            Grupal
+          </div>
+        )}
       </div>
 
       {/* CONTENIDO */}
