@@ -118,7 +118,7 @@ export default function DetalleGrupal() {
         </p>
 
         <button className="mt-6 bg-[#0F3B4C] text-white px-6 py-3 rounded-full font-semibold">
-          Consultar por WhatsApp
+          Consultar por Whatsapp
         </button>
 
       </div>
