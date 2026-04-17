@@ -134,22 +134,26 @@ const duplicarOferta = async (oferta: Oferta) => {
     const nuevoExternalId = crypto.randomUUID()
 
     // 🔥 LIMPIO SOLO LOS CAMPOS VÁLIDOS
-      const nuevaOferta = {
-        external_id: nuevoExternalId,
-        destino: original.destino,
-        hotel: original.hotel + ' (copia)',
-        precio: original.precio,
-        fecha_in: original.fecha_in,
-        fecha_out: original.fecha_out,
-        pax: original.pax,
-        vuelos: original.vuelos // 👈 ESTE FALTABA
-      }
+    const { id, created_at, updated_at, ...cleanOriginal } = original
+
+    const nuevaOferta = {
+
+      ...cleanOriginal,
+
+      external_id: nuevoExternalId,
+
+      hotel: original.hotel + ' (copia)',
+
+      status: 'draft',
+
+    }
 
     const { error: insertError } = await supabase
       .from('ofertas')
       .insert(nuevaOferta)
 
     if (insertError) {
+      console.error('INSERT ERROR:', insertError)
       console.error(insertError)
       setToast('Error al duplicar')
       return
