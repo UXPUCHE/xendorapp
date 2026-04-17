@@ -40,61 +40,62 @@ export default function CardGrupal({ data }: { data: Grupal }) {
   return (
     <div
       onClick={handleClick}
-      className={`w-[280px] min-w-[280px] rounded-2xl overflow-hidden shadow-md cursor-pointer transition hover:shadow-xl ${
+      className={`w-full rounded-2xl overflow-hidden shadow-md cursor-pointer transition hover:shadow-xl ${
         isSoldOut ? 'opacity-70 cursor-not-allowed' : ''
       }`}
     >
       {/* IMAGEN */}
-      <div className="relative h-[180px] w-full">
+      <div className="relative h-[240px] w-full">
         <img
           src={data.imagen}
           alt={data.titulo}
           className="w-full h-full object-cover"
+          onError={(e) => {
+            e.currentTarget.src = 'https://placehold.co/600x400?text=Pasaje+Club'
+          }}
         />
 
         {/* BADGE */}
-        <div
-          className={`absolute bottom-3 right-3 text-white text-xs px-3 py-1 rounded-full ${color}`}
-        >
+        <div className="absolute top-3 right-3 bg-white text-[#0F3B4C] text-xs px-3 py-1 rounded-full shadow-md">
           {data.tipo === 'mujeres' ? 'Solo mujeres' : 'Grupal'}
         </div>
       </div>
 
       {/* CONTENIDO */}
-      <div className="bg-white p-4 space-y-2">
+      <div className="bg-white p-5 space-y-2">
         {/* FECHA */}
         <p className="text-xs text-gray-400 uppercase">
           {formatFecha(data.fecha_inicio)} - {formatFecha(data.fecha_fin)}
         </p>
 
         {/* TITULO */}
-        <h3 className="text-lg font-semibold text-[#0F3B4C] leading-tight">
+        <h3 className="text-xl font-semibold text-[#0F3B4C] leading-tight">
           {data.titulo}
         </h3>
 
         {/* SUBTITULO */}
         {data.subtitulo && (
-          <p className="text-xs text-gray-500">
+          <p className="text-sm text-gray-500">
             {data.subtitulo}
           </p>
         )}
 
         {/* PRECIO */}
         {data.precio_desde && (
-          <p className="text-sm font-semibold text-[#0F3B4C]">
+          <p className="text-base font-semibold text-[#0F3B4C]">
             Desde USD {data.precio_desde}
           </p>
         )}
 
         {/* CTA */}
         <button
-          className={`w-full mt-3 py-2 rounded-full text-sm font-semibold ${
+          className={`w-full mt-4 py-3 rounded-full text-base font-semibold ${
             isSoldOut
               ? 'bg-gray-300 text-white'
               : `${color} text-white`
           }`}
         >
-          {isSoldOut ? 'SOLD OUT' : 'Ver viaje'}
+          {isSoldOut ? 'SOLD OUT' : 'ME INTERESA'}
         </button>
       </div>
     </div>
