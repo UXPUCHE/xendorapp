@@ -6,8 +6,10 @@ import FlightCard from '../../components/grupales/FlightCard'
 
 let L: any = null // eslint-disable-line @typescript-eslint/no-explicit-any
 import 'leaflet/dist/leaflet.css'
-// @ts-ignore
-import type {} from 'leaflet'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const __leaflet_types_fix = true
+
+declare module 'leaflet'
 
 type TabType = 'resumen' | 'itinerario' | 'hoteles' | 'mapa' | 'vuelos' | 'documentos'
 
@@ -150,7 +152,8 @@ useEffect(() => {
     mapInstanceRef.current = null
   }
 
-  import('leaflet').then((leaflet: any) => {
+  // @ts-ignore
+  import('leaflet').then((leaflet) => {
     L = leaflet
 
     delete (L.Icon.Default.prototype as any)._getIconUrl
