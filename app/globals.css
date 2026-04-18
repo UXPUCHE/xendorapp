@@ -86,3 +86,37 @@ body {
   animation: slideUpFade 0.35s ease-out;
 }
 
+@keyframes flightMove {
+  0% {
+    left: -2%;
+    transform: translateY(-50%) rotate(0deg);
+  }
+
+  /* llega a escala */
+  45% {
+    left: 50%;
+    transform: translateY(-50%) rotate(2deg);
+  }
+
+  /* pausa en escala */
+  55% {
+    left: 50%;
+    transform: translateY(-50%) rotate(2deg);
+  }
+
+  /* sigue viaje */
+  100% {
+    left: 102%;
+    transform: translateY(-50%) rotate(0deg);
+  }
+}
+
+
+.plane {
+  pointer-events: none;
+  left: -2%;
+}
+
+.group:hover .plane {
+  animation: flightMove 6s linear forwards;
+}
