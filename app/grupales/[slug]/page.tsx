@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import FlightCard from '../../components/grupales/FlightCard'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-declare module 'leaflet'
+
 
 let L: any = null // eslint-disable-line @typescript-eslint/no-explicit-any
 import 'leaflet/dist/leaflet.css'
