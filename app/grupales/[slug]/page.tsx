@@ -6,10 +6,6 @@ import FlightCard from '../../components/grupales/FlightCard'
 
 let L: any = null // eslint-disable-line @typescript-eslint/no-explicit-any
 import 'leaflet/dist/leaflet.css'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const __leaflet_types_fix = true
-
-declare module 'leaflet'
 
 type TabType = 'resumen' | 'itinerario' | 'hoteles' | 'mapa' | 'vuelos' | 'documentos'
 
