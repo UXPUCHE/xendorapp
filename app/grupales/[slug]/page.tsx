@@ -136,6 +136,27 @@ export default function Page() {
       ],
     },
   ]
+useEffect(() => {
+  const sendHeight = () => {
+    const height = document.body.scrollHeight
+
+    window.parent.postMessage(
+      {
+        type: "resize",
+        height
+      },
+      "*"
+    )
+  }
+
+  const observer = new ResizeObserver(sendHeight)
+
+  observer.observe(document.documentElement)
+
+  sendHeight()
+
+  return () => observer.disconnect()
+}, [])
 
 useEffect(() => {
   if (activeTab !== 'resumen' && activeTab !== 'mapa') return
@@ -692,7 +713,7 @@ return (
           {/* INCLUYE */}
           <div className="bg-gray-50 p-5 rounded-xl space-y-2 text-sm">
             <p>✔ Vuelo internacional</p>
-            <p>✔ Alojamiento 4 y 5★</p>
+            <p>✔ Alojamiento seleccionados</p>
             <p>✔ Traslados</p>
             <p>✔ Excursiones</p>
             <p>✔ Coordinador</p>
