@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import PasajeSaleCard from "../components/PasajeSaleCard";
+import PasajeSaleCard from './components/PasajeSaleCard'
 
 export default async function PasajeSalePage() {
 
