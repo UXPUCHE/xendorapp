@@ -47,6 +47,12 @@ interface Oferta {
   vuelos: Vuelos | string
   servicios?: Servicios
   estrellas?: number
+  hoteles?: {
+    nombre: string
+    noches: number
+    destino?: string
+    imagen?: string
+  }[]
 }
 
 interface Fecha {
@@ -115,7 +121,7 @@ export default function Home({
     const fetchData = async () => {
       const { data } = await supabase
         .from('ofertas')
-        .select('external_id, destino, hotel, fecha_in, fecha_out, precio, pax, regimen, status, badge, imagen, vuelos, servicios, estrellas')
+        .select('external_id, destino, hotel, fecha_in, fecha_out, precio, pax, regimen, status, badge, imagen, vuelos, servicios, estrellas, hoteles')
         .eq('status', 'publicado')
 
       const normalizar = (str: string) =>
@@ -173,9 +179,15 @@ window.parent.postMessage(
     type: "price_update",
     payload: {
       precio,
-      hotel: hotelSeleccionado?.hotel || ofertasFiltradas[0]?.hotel,
+      hotel: hotelSeleccionado?.hotel 
+        || (hotelSeleccionado as any)?.hoteles?.map((h: any) => h.nombre).join(' + ')
+        || ofertasFiltradas[0]?.hotel,
       plan: tipoPlanSeleccionado,
-      destino: formatDestino(hotelSeleccionado?.destino || ofertasFiltradas[0]?.destino),
+      destino: formatDestino(
+        hotelSeleccionado?.destino 
+        || (hotelSeleccionado as any)?.hoteles?.map((h: any) => h.destino).join(' + ')
+        || ofertasFiltradas[0]?.destino
+      ),
       fecha: `${formatFecha(fechaSeleccionada?.fecha_inicio || '')} al ${formatFecha(fechaSeleccionada?.fecha_fin || '')}`,
       urgency
     }
@@ -521,7 +533,9 @@ return (
         ) : (
           <div className="grid gap-5">
               {ordenarOfertas(ofertasFiltradas).map((oferta) => {
-                const isSelected = hotelSeleccionado?.hotel === oferta.hotel
+                const isSelected = hotelSeleccionado?.external_id === oferta.external_id
+                const isCombo = (oferta as any).hoteles && (oferta as any).hoteles.length > 1
+                const hotelesCombo = (oferta as any).hoteles || []
                 const badges = getBadges(oferta)
                 const mainBadge = badges[0] || null
                 const urgency = getUrgency(oferta)
@@ -574,8 +588,67 @@ return (
                     )}
 
                   </div>
-                      <h3 className="text-lg md:text-2xl font-semibold text-[#0F3B4C]">{oferta.hotel}</h3>
-                      <p className="text-sm md:text-base text-gray-500 mt-0">
+                  {!isCombo ? (
+                  <h3 className="text-lg md:text-2xl font-semibold text-[#0F3B4C]">
+                    {oferta.hotel}
+                  </h3>
+                  ) : (
+                    <div className="space-y-3">
+
+                      {/* BADGE */}
+                      <div className="inline-flex items-center gap-2 bg-[#F3E8FF] text-[#7C3AED] text-xs px-3 py-1 rounded-full font-medium w-fit">
+                        ✨ Combo {hotelesCombo.length} destinos
+                      </div>
+
+                      {/* TITULO */}
+                      <h3 className="text-lg md:text-2xl font-semibold text-[#0F3B4C]">
+                        {hotelesCombo.map((h: any) => h.destino || h.nombre || 'Destino').join(' + ')}
+                      </h3>
+
+                      {/* DESCRIPCION */}
+                      <p className="text-sm text-gray-500">
+                        Disfrutá lo mejor de {hotelesCombo.map((h: any) => h.destino || h.nombre || 'este destino').join(' y ')}
+                      </p>
+
+                      {/* MINI CARDS */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
+                        {hotelesCombo.map((h: any, i: number) => (
+                          <div
+                            key={i}
+                            className="flex items-center gap-3 border rounded-xl p-3 bg-white"
+                          >
+                            {/* imagen real o placeholder */}
+                            {h.imagen ? (
+                              <img
+                                src={h.imagen}
+                                className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
+                                onError={(e) => {
+                                  (e.currentTarget as HTMLImageElement).src = 'https://placehold.co/100x100'
+                                }}
+                              />
+                            ) : (
+                              <div className="w-10 h-10 rounded-lg bg-gray-200 flex-shrink-0" />
+                            )}
+
+                            <div className="flex flex-col">
+                              <span className="text-xs text-gray-400">
+                                📍 {h.destino || formatDestino(oferta.destino)}
+                              </span>
+
+                              <span className="font-medium text-[#0F3B4C] text-sm leading-tight">
+                                {h.nombre}
+                              </span>
+
+                              <span className="text-xs text-[#00A99D]">
+                                {h.noches} noches
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                    </div>
+                  )}                      <p className="text-sm md:text-base text-gray-500 mt-0">
                         {getNoches(oferta.fecha_in, oferta.fecha_out)} noches · {oferta.regimen || 'All inclusive'}
                       </p>
                       <div className="flex items-center gap-2 text-sm">

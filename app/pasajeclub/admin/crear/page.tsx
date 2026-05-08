@@ -50,6 +50,11 @@ interface Oferta {
   servicios: Servicios
   regimen?: string
   estrellas?: number
+  hoteles?: {
+    nombre: string
+    noches: number
+    destino?: string
+  }[]
 }
 
 const initialState: Oferta = {
@@ -65,6 +70,7 @@ const initialState: Oferta = {
   imagen: '',
   badge: '',
   regimen: 'All inclusive',
+  hoteles: [],
   vuelos: {
     tramos: [
       { tipo: 'ida', origen: '', destino: '' },
@@ -72,7 +78,6 @@ const initialState: Oferta = {
     ],
     clase: '',
     equipaje: '',
-
     // 👇 NUEVO
     escalas_ida: '',
     escalas_vuelta: '',
@@ -372,6 +377,40 @@ const handleGeneratePDF = async () => {
     }))
   }
 
+  const addHotelCombo = () => {
+    setOfertaDraft(prev => ({
+      ...prev,
+      hoteles: [
+        ...(prev.hoteles || []),
+        { nombre: '', noches: 1, destino: '' }
+      ]
+    }))
+  }
+
+  const updateHotelCombo = (index: number, field: 'nombre' | 'noches' | 'destino', value: any) => {
+    setOfertaDraft(prev => ({
+      ...prev,
+      hoteles: (prev.hoteles || []).map((h, i) =>
+        i === index
+          ? {
+              ...h,
+              [field]:
+                field === 'noches'
+                  ? Number(value)
+                  : String(value).trim()
+            }
+          : h
+      )
+    }))
+  }
+
+  const removeHotelCombo = (index: number) => {
+    setOfertaDraft(prev => ({
+      ...prev,
+      hoteles: (prev.hoteles || []).filter((_, i) => i !== index)
+    }))
+  }
+
       const guardarOferta = async () => {
         if (saving) return
         setSaving(true)
@@ -398,6 +437,13 @@ const handleGeneratePDF = async () => {
       const { data, error } = await supabase.from('ofertas').insert([{
         ...ofertaDraft,
         servicios: serviciosFinal, // 👈 importante
+        hoteles: (ofertaDraft.hoteles || [])
+          .filter(h => h.nombre?.trim())
+          .map(h => ({
+            nombre: h.nombre.trim(),
+            noches: Number(h.noches) || 1,
+            destino: h.destino?.trim() || ''
+          })),
         created_by: user?.id, // ✅ ESTE ES EL FIX
         badge: ofertaDraft.badge || null,
         destino: ofertaDraft.destino.toLowerCase().replace(/\s+/g, '-'),
@@ -652,6 +698,51 @@ const handleGeneratePDF = async () => {
 
         {/* SERVICIOS */}
         <Card title="Servicios">
+        {/* HOTELES COMBINADOS */}
+        <Card title="Hoteles combinados (opcional)">
+          <div className="space-y-4">
+            {(ofertaDraft.hoteles || []).length > 0 && (
+              <>
+                {(ofertaDraft.hoteles || []).map((h, i) => (
+                  <div key={i} className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end border rounded-xl p-3 bg-gray-50">
+                    <Input
+                      label="Hotel"
+                      value={h.nombre}
+                      onChange={(e) => updateHotelCombo(i, 'nombre', e.target.value)}
+                    />
+
+                    <Input
+                      label="Noches"
+                      type="number"
+                      value={h.noches}
+                      onChange={(e) => updateHotelCombo(i, 'noches', e.target.value)}
+                    />
+
+                    <Input
+                      label="Ciudad (CLAVE)"
+                      placeholder="Ej: Cancún"
+                      value={h.destino || ''}
+                      onChange={(e) => updateHotelCombo(i, 'destino', e.target.value)}
+                    />
+
+                    <button
+                      onClick={() => removeHotelCombo(i)}
+                      className="bg-red-500 text-white px-3 py-2 rounded-lg text-sm h-fit"
+                    >
+                      ✕  
+                    </button>
+                  </div>
+                ))}
+              </>
+            )}
+            <button
+              onClick={addHotelCombo}
+              className="bg-[#00A99D] text-white px-4 py-2 rounded-lg text-sm"
+            >
+              + Agregar hotel
+            </button>
+          </div>
+        </Card>
 
           <Select label="Transporte" onChange={(e)=>updateServicio('transporte',e.target.value)}>
             <option value="">Seleccionar</option>
@@ -756,10 +847,17 @@ const handleGeneratePDF = async () => {
 
       <div className="rounded-2xl p-6">
         <div id="pdf-content">
-          <Home
-            destino={ofertaDraft.destino || 'punta-cana'}
-            overrideOfertas={[ofertaDraft]}
-          />
+          {(() => {
+            const ofertaPreview = {
+              ...ofertaDraft
+            }
+            return (
+              <Home
+                destino={ofertaDraft.destino || 'punta-cana'}
+                overrideOfertas={[ofertaPreview]}
+              />
+            )
+          })()}
         </div>
       </div>
     </div>
