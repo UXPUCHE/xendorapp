@@ -119,10 +119,15 @@ export default function Home({
     }
 
     const fetchData = async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('ofertas')
         .select('external_id, destino, hotel, fecha_in, fecha_out, precio, pax, regimen, status, badge, imagen, vuelos, servicios, estrellas, hoteles')
         .eq('status', 'publicado')
+
+      console.log('SUPABASE URL:', process.env.NEXT_PUBLIC_SUPABASE_URL)
+      console.log('SUPABASE KEY:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.slice(0, 20))
+      console.log('OFERTAS DATA', data)
+      console.log('OFERTAS ERROR', error)
 
       const normalizar = (str: string) =>
         str
