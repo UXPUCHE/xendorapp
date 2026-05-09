@@ -1,13 +1,50 @@
+'use client'
+
+import { useEffect, useState } from 'react'
 import { supabase } from "@/lib/supabase";
 import PasajeSaleCard from './components/PasajeSaleCard'
 
-export default async function PasajeSalePage() {
+export default function PasajeSalePage() {
 
-  const { data: paquetes } = await supabase
-    .from("sale_cards")
-    .select("*")
-    .eq("activo", true)
-    .order("orden", { ascending: true });
+  const [paquetes, setPaquetes] = useState<any[]>([])
+
+  useEffect(() => {
+
+    const fetchData = async () => {
+      const { data } = await supabase
+        .from("sale_cards")
+        .select("*")
+        .eq("activo", true)
+        .order("orden", { ascending: true })
+
+      setPaquetes(data || [])
+    }
+
+    fetchData()
+
+  }, [])
+
+  useEffect(() => {
+    const sendHeight = () => {
+      const height = document.body.scrollHeight
+
+      window.parent.postMessage(
+        {
+          type: "resize",
+          height
+        },
+        "*"
+      )
+    }
+
+    const observer = new ResizeObserver(sendHeight)
+
+    observer.observe(document.documentElement)
+
+    sendHeight()
+
+    return () => observer.disconnect()
+  }, [])
 
   return (
     <main className="w-full bg-white py-16">

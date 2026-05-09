@@ -29,8 +29,8 @@ const menu = [
   },
   {
     label: 'Campañas',
-    href: '/pasajeclub/admin/campaigns',
     icon: Megaphone,
+    path: '/pasajeclub/admin/campaigns',
   },
   {
     label: 'Herramientas',
