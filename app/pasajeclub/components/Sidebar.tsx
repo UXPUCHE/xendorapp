@@ -67,7 +67,7 @@ export default function Sidebar() {
             return (
               <button
                 key={item.path}
-                onClick={() => router.push(item.path)}
+                onClick={() => item.path && router.push(item.path)}
                 className={`
                   w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition
                   ${active
