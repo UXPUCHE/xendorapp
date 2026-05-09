@@ -10,8 +10,8 @@ export default async function PasajeSalePage() {
     .order("orden", { ascending: true });
 
   return (
-    <main className="min-h-screen bg-white py-20 px-6">
-      <div className="max-w-7xl mx-auto">
+    <main className="w-full bg-white py-16">
+      <div className="w-full px-4 md:px-6 xl:px-8">
 
         {/* Header */}
         <div className="mb-16">
