@@ -57,14 +57,18 @@ export default function PasajeSalePage() {
       <div className="w-full px-4 md:px-6 xl:px-8 bg-transparent">
 
         {/* Header */}
-        <div className="mb-16">
-          <p className="text-yellow-400 uppercase tracking-[0.3em] text-sm mb-4">
-            Pasaje Sale
-          </p>
+        <div className="mb-16 flex flex-col items-center text-center">
 
-          <h1 className="text-[#072E40] text-5xl font-bold max-w-4xl leading-tight tracking-[-0.04em]">
+          <img
+            src="https://pasajeclub.com/wp-content/uploads/2026/05/pasajesale-logo.png"
+            alt="Pasaje Sale"
+            className="h-20 md:h-24 w-auto mb-6 object-contain"
+          />
+
+          <h1 className="text-[#072E40] text-4xl md:text-6xl font-bold max-w-5xl leading-[0.95] tracking-[-0.04em]">
             Ofertas exclusivas para viajar este 2026
           </h1>
+
         </div>
 
         {/* Grid */}
