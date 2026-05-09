@@ -25,6 +25,8 @@ export default function PasajeSalePage() {
   }, [])
 
   useEffect(() => {
+    document.body.style.background = 'transparent'
+    document.documentElement.style.background = 'transparent'
     const sendHeight = () => {
       const height = document.body.scrollHeight
 
@@ -43,12 +45,16 @@ export default function PasajeSalePage() {
 
     sendHeight()
 
-    return () => observer.disconnect()
+    return () => {
+      observer.disconnect()
+      document.body.style.background = '#ffffff'
+      document.documentElement.style.background = '#ffffff'
+    }
   }, [])
 
   return (
-   <main className="w-full py-16">
-      <div className="w-full px-4 md:px-6 xl:px-8">
+   <main className="w-full py-16 bg-transparent">
+      <div className="w-full px-4 md:px-6 xl:px-8 bg-transparent">
 
         {/* Header */}
         <div className="mb-16">
