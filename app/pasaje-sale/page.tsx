@@ -56,7 +56,7 @@ export default function PasajeSalePage() {
             Pasaje Sale
           </p>
 
-          <h1 className="color:#072E40 text-5xl font-bold max-w-4xl leading-tight tracking-[-0.04em]">
+          <h1 className="text-[#072E40] text-5xl font-bold max-w-4xl leading-tight tracking-[-0.04em]">
             Ofertas exclusivas para viajar este 2026
           </h1>
         </div>
