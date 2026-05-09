@@ -179,26 +179,26 @@ useEffect(() => {
   const ofertaActiva = hotelSeleccionado || ofertasFiltradas[0] || null
   const urgency = ofertaActiva ? getUrgency(ofertaActiva) : null
 
-// window.parent.postMessage(
-//   {
-//     type: "price_update",
-//     payload: {
-//       precio,
-//       hotel: hotelSeleccionado?.hotel 
-//         || (hotelSeleccionado as any)?.hoteles?.map((h: any) => h.nombre).join(' + ')
-//         || ofertasFiltradas[0]?.hotel,
-//       plan: tipoPlanSeleccionado,
-//       destino: formatDestino(
-//         hotelSeleccionado?.destino 
-//         || (hotelSeleccionado as any)?.hoteles?.map((h: any) => h.destino).join(' + ')
-//         || ofertasFiltradas[0]?.destino
-//       ),
-//       fecha: `${formatFecha(fechaSeleccionada?.fecha_inicio || '')} al ${formatFecha(fechaSeleccionada?.fecha_fin || '')}`,
-//       urgency
-//     }
-//   },
-//   "*"
-// )
+window.parent.postMessage(
+  {
+    type: "price_update",
+    payload: {
+      precio,
+      hotel: hotelSeleccionado?.hotel 
+        || (hotelSeleccionado as any)?.hoteles?.map((h: any) => h.nombre).join(' + ')
+        || ofertasFiltradas[0]?.hotel,
+      plan: tipoPlanSeleccionado,
+      destino: formatDestino(
+        hotelSeleccionado?.destino 
+        || (hotelSeleccionado as any)?.hoteles?.map((h: any) => h.destino).join(' + ')
+        || ofertasFiltradas[0]?.destino
+      ),
+      fecha: `${formatFecha(fechaSeleccionada?.fecha_inicio || '')} al ${formatFecha(fechaSeleccionada?.fecha_fin || '')}`,
+      urgency
+    }
+  },
+  "*"
+)
 
 }, [hotelSeleccionado, ofertasFiltradas, tipoPlanSeleccionado])
 
