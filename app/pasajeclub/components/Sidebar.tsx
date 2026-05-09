@@ -6,6 +6,7 @@ import {
   PlusCircle,
   Pencil,
   Wrench,
+  Megaphone,
   Settings,
   LogOut
 } from 'lucide-react'
@@ -25,6 +26,11 @@ const menu = [
     label: 'Editar paquetes',
     icon: Pencil,
     path: '/admin/editar',
+  },
+  {
+    label: 'Campañas',
+    href: '/pasajeclub/admin/campaigns',
+    icon: Megaphone,
   },
   {
     label: 'Herramientas',

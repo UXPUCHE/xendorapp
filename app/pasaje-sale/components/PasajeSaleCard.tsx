@@ -12,6 +12,7 @@ interface Props {
   noches: string;
   base: string;
   incluye: string;
+  precioDetalle: string;
 }
 
 export default function PasajeSaleCard({
@@ -25,6 +26,7 @@ export default function PasajeSaleCard({
   noches,
   base,
   incluye,
+  precioDetalle,
 }: Props) {
   return (
     <div className="bg-[#F7F7F5] rounded-[30px] overflow-hidden shadow-md flex flex-col h-full border border-[#E8E8E5]">
@@ -99,7 +101,7 @@ export default function PasajeSaleCard({
           </h3>
 
           <p className="text-[#4F5C65] text-[15px] mt-2 leading-none tracking-[-0.01em]">
-            Precio por persona | {base}
+            {precioDetalle || "Precio por persona | Base doble"}
           </p>
 
         </div>
