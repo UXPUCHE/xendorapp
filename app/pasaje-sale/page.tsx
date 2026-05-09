@@ -40,6 +40,7 @@ export default async function PasajeSalePage() {
               noches={item.noches}
               base={item.base}
               incluye={item.incluye}
+              precioDetalle={item.precio_detalle}
             />
           ))}
         </div>
