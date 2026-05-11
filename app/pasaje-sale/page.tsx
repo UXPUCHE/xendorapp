@@ -70,18 +70,14 @@ export default function PasajeSalePage() {
           {paquetes?.map((item) => (
             <PasajeSaleCard
               key={item.id}
-              titulo={item.titulo}
-              subtitulo={item.subtitulo}
-              precio={item.precio}
-              moneda={item.moneda}
+              destino={item.destino}
+              headline={item.headline}
+              descripcion={item.descripcion}
               badge={item.badge}
+              promoBadge={item.promo_badge}
               imagen={item.imagen}
               whatsapp={item.whatsapp}
-              salida={item.salida}
-              noches={item.noches}
-              base={item.base}
-              incluye={item.incluye}
-              precioDetalle={item.precio_detalle}
+              pills={item.pills || []}
             />
           ))}
         </div>

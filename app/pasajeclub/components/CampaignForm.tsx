@@ -6,17 +6,13 @@ import PasajeSaleCard from '@/app/pasaje-sale/components/PasajeSaleCard'
 
 type InitialData = {
   id?: string
-  titulo?: string
-  subtitulo?: string
-  precio?: string
-  moneda?: string
+  destino?: string
+  headline?: string
+  descripcion?: string
   badge?: string
+  promo_badge?: string
   imagen?: string
-  salida?: string
-  noches?: string
-  base?: string
-  incluye?: string
-  precio_detalle?: string
+  pills?: string[]
 }
 
 type Props = {
@@ -50,33 +46,6 @@ const Input = ({ label, ...props }: InputProps) => (
   </div>
 )
 
-type SelectProps = {
-  label: string
-  children: React.ReactNode
-} & React.SelectHTMLAttributes<HTMLSelectElement>
-
-const Select = ({ label, children, ...props }: SelectProps) => (
-  <div className="flex flex-col gap-1 w-full">
-    <label className="text-xs text-[#0f3b4c]">{label}</label>
-
-    <select
-      className="
-        border border-gray-300
-        bg-white
-        p-2
-        rounded-lg
-        text-gray-800
-        focus:outline-none
-        focus:ring-2
-        focus:ring-[#00A99D]
-      "
-      {...props}
-    >
-      {children}
-    </select>
-  </div>
-)
-
 const Card = ({
   title,
   children,
@@ -99,42 +68,40 @@ export default function CampaignForm({
   isEdit,
 }: Props) {
 
-  const [titulo, setTitulo] = useState(initialData?.titulo || '')
-  const [subtitulo, setSubtitulo] = useState(initialData?.subtitulo || '')
-  const [precio, setPrecio] = useState(initialData?.precio || '')
-  const [moneda, setMoneda] = useState(
-    initialData?.moneda || 'USD'
+  const [destino, setDestino] = useState(initialData?.destino || '')
+
+  const [headline, setHeadline] = useState(
+    initialData?.headline || ''
   )
+
+  const [descripcion, setDescripcion] = useState(
+    initialData?.descripcion || ''
+  )
+
   const [badge, setBadge] = useState(initialData?.badge || '')
+
+  const [promoBadge, setPromoBadge] = useState(
+    initialData?.promo_badge || ''
+  )
+
   const [imagen, setImagen] = useState(initialData?.imagen || '')
 
-  const [salida, setSalida] = useState(
-    initialData?.salida || 'Córdoba'
+  const [pills, setPills] = useState<string[]>(
+    initialData?.pills || [
+      'All Inclusive',
+      'Pasajes',
+      'Traslados',
+      'Alojamiento',
+    ]
   )
 
-  const [pillLeft, setPillLeft] = useState(
-    initialData?.noches || '7 noches'
-  )
-
-  const [pillRight, setPillRight] = useState(
-    initialData?.base || 'Base doble'
-  )
-
-  const [incluye, setIncluye] = useState(
-    initialData?.incluye ||
-    'Vuelo • Hotel • Traslados • Asistencia'
-  )
-
-  const [precioDetalle, setPrecioDetalle] = useState(
-    initialData?.precio_detalle ||
-    'Precio por persona | Base doble'
-  )
+  const [pillInput, setPillInput] = useState('')
 
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
 
   const whatsappMessage = encodeURIComponent(
-    `Hola! 👋 Vi una oferta en PASAJE SALE y quiero consultar por ${titulo || 'Río de Janeiro'} desde USD ${precio || '899'} ✈️`
+    `Hola! 👋 Vi una oferta en PASAJE SALE y quiero consultar por ${destino || 'Aruba'} ✈️`
   )
 
   const whatsappLink = `https://wa.me/5493518613773?text=${whatsappMessage}`
@@ -179,19 +146,15 @@ export default function CampaignForm({
       setLoading(true)
 
       const payload = {
-        titulo,
-        subtitulo,
-        salida,
-        noches: pillLeft,
-        base: pillRight,
-        incluye,
-        precio,
-        moneda,
+        destino,
+        headline,
+        descripcion,
         badge,
+        promo_badge: promoBadge,
+        pills,
         imagen,
         whatsapp: whatsappLink,
         campaign: slug,
-        precio_detalle: precioDetalle,
       }
 
       const query = isEdit
@@ -213,17 +176,19 @@ export default function CampaignForm({
 
       alert(isEdit ? 'Oferta actualizada 🚀' : 'Oferta creada 🚀')
 
-      setTitulo('')
-      setSubtitulo('')
-      setPrecio('')
+      setDestino('')
+      setHeadline('')
+      setDescripcion('')
       setBadge('')
+      setPromoBadge('')
       setImagen('')
 
-      setSalida('Córdoba')
-      setPillLeft('7 noches')
-      setPillRight('Base doble')
-      setIncluye('Vuelo • Hotel • Traslados • Asistencia')
-      setPrecioDetalle('Precio por persona | Base doble')
+      setPills([
+        'All Inclusive',
+        'Pasajes',
+        'Traslados',
+        'Alojamiento',
+      ])
 
     } catch (err) {
       console.error(err)
@@ -254,84 +219,88 @@ export default function CampaignForm({
         <Card title="Información básica">
 
           <Input
-            label="Título"
-            value={titulo}
-            onChange={(e) => setTitulo(e.target.value)}
-            placeholder="Ej: Río de Janeiro"
+            label="Destino"
+            value={destino}
+            onChange={(e) => setDestino(e.target.value)}
+            placeholder="Ej: Aruba"
           />
 
           <Input
-            label="Subtítulo"
-            value={subtitulo}
-            onChange={(e) => setSubtitulo(e.target.value)}
-            placeholder="Ej: 7 noches • vuelo directo"
+            label="Headline"
+            value={headline}
+            onChange={(e) => setHeadline(e.target.value)}
+            placeholder="Ej: Hoteles Iberostar en la Isla Feliz"
           />
 
           <Input
-            label="Salida desde"
-            value={salida}
-            onChange={(e) => setSalida(e.target.value)}
-            placeholder="Ej: Córdoba"
+            label="Descripción"
+            value={descripcion}
+            onChange={(e) => setDescripcion(e.target.value)}
+            placeholder="Todo incluido + pasajes + traslados + alojamiento"
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
             <Input
-              label="Pill izquierda"
-              value={pillLeft}
-              onChange={(e) => setPillLeft(e.target.value)}
-              placeholder="Ej: 7 noches"
+              label="Badge"
+              value={badge}
+              onChange={(e) => setBadge(e.target.value)}
+              placeholder="HOT SALE"
             />
 
             <Input
-              label="Pill derecha"
-              value={pillRight}
-              onChange={(e) => setPillRight(e.target.value)}
-              placeholder="Ej: All Inclusive"
+              label="Promo badge"
+              value={promoBadge}
+              onChange={(e) => setPromoBadge(e.target.value)}
+              placeholder="Hasta 55% OFF"
             />
 
           </div>
 
-          <Input
-            label="Incluye"
-            value={incluye}
-            onChange={(e) => setIncluye(e.target.value)}
-            placeholder="Vuelo • Hotel • Traslados"
-          />
+          <div className="space-y-3">
 
-          <Input
-            label="Texto debajo del precio"
-            value={precioDetalle}
-            onChange={(e) => setPrecioDetalle(e.target.value)}
-            placeholder="Precio por persona | Base doble"
-          />
+            <label className="text-xs text-[#0f3b4c]">
+              Pills
+            </label>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex gap-2">
+              <input
+                value={pillInput}
+                onChange={(e) => setPillInput(e.target.value)}
+                placeholder="Ej: Pasajes"
+                className="flex-1 border border-gray-300 bg-white p-2 rounded-lg text-gray-800"
+              />
 
-            <Input
-              label="Precio"
-              value={precio}
-              onChange={(e) => setPrecio(e.target.value)}
-              placeholder="899"
-            />
+              <button
+                type="button"
+                onClick={() => {
+                  if (!pillInput.trim()) return
 
-            <Select
-              label="Moneda"
-              value={moneda}
-              onChange={(e) => setMoneda(e.target.value)}
-            >
-              <option>USD</option>
-              <option>ARS</option>
-            </Select>
+                  setPills([...pills, pillInput.trim()])
+                  setPillInput('')
+                }}
+                className="bg-[#0f3b4c] text-white px-4 rounded-lg"
+              >
+                Agregar
+              </button>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {pills.map((pill, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => {
+                    setPills(pills.filter((_, i) => i !== index))
+                  }}
+                  className="bg-[#F3F3F3] border border-[#DEDEDE] px-4 py-2 rounded-full text-sm text-[#0A3149]"
+                >
+                  {pill} ×
+                </button>
+              ))}
+            </div>
 
           </div>
-
-          <Input
-            label="Badge"
-            value={badge}
-            onChange={(e) => setBadge(e.target.value)}
-            placeholder="HOT SALE"
-          />
 
           <div className="space-y-3">
 
@@ -415,22 +384,15 @@ export default function CampaignForm({
         <div className="max-w-md">
 
         <PasajeSaleCard
-          titulo={titulo || 'Río de Janeiro'}
-          subtitulo={subtitulo || 'Vuelo directo'}
-          precio={precio || '899'}
-          moneda={moneda}
+          destino={destino || 'ARUBA'}
+          headline={headline || 'Hoteles Iberostar en la Isla Feliz'}
+          descripcion={
+            descripcion ||
+            'Todo incluido + pasajes + traslados + alojamiento'
+          }
           badge={badge || 'HOT SALE'}
-          salida={salida || 'Córdoba'}
-          noches={pillLeft || '7 noches'}
-          base={pillRight || 'Base doble'}
-          incluye={
-            incluye ||
-            'Vuelo • Hotel • Traslados • Asistencia'
-          }
-          precioDetalle={
-            precioDetalle ||
-            'Precio por persona | Base doble'
-          }
+          promoBadge={promoBadge || 'Hasta 55% OFF'}
+          pills={pills}
           imagen={
             imagen ||
             'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=1200&auto=format&fit=crop'
