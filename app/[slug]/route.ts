@@ -25,5 +25,8 @@ export async function GET(
     })
   }
 
-  return NextResponse.redirect(new URL(data.url))
+  return Response.json({
+    slug,
+    url: data.url
+  })
 }
