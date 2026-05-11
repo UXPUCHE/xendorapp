@@ -12,6 +12,10 @@ interface Props {
   whatsapp: string;
 
   pills: string[];
+
+  precio?: string;
+  moneda?: string;
+  precioDetalle?: string;
 }
 
 export default function PasajeSaleCard({
@@ -23,6 +27,9 @@ export default function PasajeSaleCard({
   imagen,
   whatsapp,
   pills,
+  precio,
+  moneda,
+  precioDetalle,
 }: Props) {
   return (
     <div className="bg-[#F7F7F5] rounded-[30px] overflow-hidden shadow-[0_10px_35px_rgba(0,0,0,0.06)] flex flex-col h-full border border-[#E8E8E5]">
@@ -85,7 +92,7 @@ export default function PasajeSaleCard({
         </p>
 
         {/* Pills */}
-        <div className="grid grid-cols-4 gap-3 mb-7">
+        <div className="grid grid-cols-4 gap-2 mb-7">
           {pills?.map((pill, index) => {
 
             const styles = [
@@ -98,13 +105,32 @@ export default function PasajeSaleCard({
             return (
               <div
                 key={index}
-                className={`px-4 py-[13px] rounded-full text-[13px] font-semibold leading-none border text-center whitespace-nowrap ${styles[index % 4]}`}
+                className={`px-3 py-[12px] rounded-full text-[12px] font-semibold leading-[1] border text-center truncate overflow-hidden ${styles[index % 4]}`}
               >
                 {pill}
               </div>
             )
           })}
         </div>
+
+        {/* Precio */}
+        {precio && (
+          <div className="mb-7">
+
+            <p className="text-[#5B6972] text-[15px] leading-none mb-2">
+              Desde
+            </p>
+
+            <h3 className="text-[#0A3149] text-[42px] font-bold leading-[0.9] tracking-[-0.05em] mb-2">
+              {moneda || 'USD'} {precio}
+            </h3>
+
+            <p className="text-[#5B6972] text-[14px] leading-none">
+              {precioDetalle || 'Por persona en base doble'}
+            </p>
+
+          </div>
+        )}
 
         {/* CTA */}
         <Link

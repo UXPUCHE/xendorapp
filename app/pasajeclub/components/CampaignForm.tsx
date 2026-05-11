@@ -13,6 +13,9 @@ type InitialData = {
   promo_badge?: string
   imagen?: string
   pills?: string[]
+  precio?: string
+  moneda?: string
+  precio_detalle?: string
 }
 
 type Props = {
@@ -97,6 +100,18 @@ export default function CampaignForm({
 
   const [pillInput, setPillInput] = useState('')
 
+  const [precio, setPrecio] = useState(
+    initialData?.precio || ''
+  )
+
+  const [moneda, setMoneda] = useState(
+    initialData?.moneda || 'USD'
+  )
+
+  const [precioDetalle, setPrecioDetalle] = useState(
+    initialData?.precio_detalle || 'Por persona en base doble'
+  )
+
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
 
@@ -152,6 +167,9 @@ export default function CampaignForm({
         badge,
         promo_badge: promoBadge,
         pills,
+        precio,
+        moneda,
+        precio_detalle: precioDetalle,
         imagen,
         whatsapp: whatsappLink,
         campaign: slug,
@@ -189,6 +207,10 @@ export default function CampaignForm({
         'Traslados',
         'Alojamiento',
       ])
+
+      setPrecio('')
+      setMoneda('USD')
+      setPrecioDetalle('Por persona en base doble')
 
     } catch (err) {
       console.error(err)
@@ -302,6 +324,55 @@ export default function CampaignForm({
 
           </div>
 
+          <div className="space-y-4">
+
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={!!precio}
+                onChange={(e) => {
+                  if (!e.target.checked) {
+                    setPrecio('')
+                  } else {
+                    setPrecio('3000')
+                  }
+                }}
+              />
+
+              <label className="text-sm text-[#0A3149] font-medium">
+                Mostrar precio en la card
+              </label>
+            </div>
+
+            {precio && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                <Input
+                  label="Precio"
+                  value={precio}
+                  onChange={(e) => setPrecio(e.target.value)}
+                  placeholder="3000"
+                />
+
+                <Input
+                  label="Moneda"
+                  value={moneda}
+                  onChange={(e) => setMoneda(e.target.value)}
+                  placeholder="USD"
+                />
+
+                <Input
+                  label="Texto inferior"
+                  value={precioDetalle}
+                  onChange={(e) => setPrecioDetalle(e.target.value)}
+                  placeholder="Por persona en base doble"
+                />
+
+              </div>
+            )}
+
+          </div>
+
           <div className="space-y-3">
 
             <div className="flex flex-col gap-1">
@@ -398,6 +469,9 @@ export default function CampaignForm({
             'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=1200&auto=format&fit=crop'
           }
           whatsapp={whatsappLink}
+          precio={precio}
+          moneda={moneda}
+          precioDetalle={precioDetalle}
         />
 
         </div>
