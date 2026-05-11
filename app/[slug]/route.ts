@@ -25,5 +25,5 @@ export async function GET(
     })
   }
 
-  return NextResponse.redirect(data.url)
+  return Response.redirect(data.url, 302)
 }
