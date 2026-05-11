@@ -2,7 +2,7 @@ import Link from "next/link";
 
 interface Props {
   destino: string;
-  headline: string;
+  salida: string;
   descripcion: string;
 
   badge: string;
@@ -16,7 +16,7 @@ interface Props {
 
 export default function PasajeSaleCard({
   destino,
-  headline,
+  salida,
   descripcion,
   badge,
   promoBadge,
@@ -25,7 +25,7 @@ export default function PasajeSaleCard({
   pills,
 }: Props) {
   return (
-    <div className="bg-[#F7F7F5] rounded-[30px] overflow-hidden shadow-md flex flex-col h-full border border-[#E8E8E5]">
+    <div className="bg-[#F7F7F5] rounded-[30px] overflow-hidden shadow-[0_10px_35px_rgba(0,0,0,0.06)] flex flex-col h-full border border-[#E8E8E5]">
 
       {/* Imagen */}
       <div className="relative h-[260px] overflow-hidden rounded-t-[30px]">
@@ -57,15 +57,15 @@ export default function PasajeSaleCard({
       {/* Content */}
       <div className="px-7 pt-6 pb-6 flex flex-col flex-1">
 
-        {/* Headline + Promo */}
-        <div className="flex items-start justify-between gap-4 mb-4">
+        {/* Ciudad + Promo */}
+        <div className="flex items-center justify-between gap-4 mb-5">
 
-          <p className="text-[#0A3149] text-[17px] leading-[1.35] tracking-[-0.02em] max-w-[75%]">
-            {headline}
+          <p className="text-[#0A3149] text-[17px] font-semibold tracking-[-0.03em]">
+            {salida}
           </p>
 
           {promoBadge && (
-            <div className="bg-[#F5A623] text-[#052F49] text-[12px] font-bold px-4 py-[10px] rounded-full whitespace-nowrap leading-none shadow-sm uppercase tracking-[0.03em]">
+            <div className="bg-[#F2C230] text-[#052F49] text-[12px] font-bold px-5 py-[11px] rounded-full whitespace-nowrap leading-none uppercase tracking-[0.03em] shadow-sm">
               {promoBadge}
             </div>
           )}
@@ -74,11 +74,7 @@ export default function PasajeSaleCard({
 
         {/* Destino */}
         <div className="mb-5">
-          <p className="text-[#6B7A84] uppercase text-[12px] tracking-[0.22em] mb-2 font-semibold">
-            Destino
-          </p>
-
-          <h2 className="text-[#0A3149] text-[42px] font-bold leading-[0.95] tracking-[-0.055em] uppercase">
+          <h2 className="text-[#0A3149] text-[38px] font-bold leading-[0.95] tracking-[-0.055em]">
             {destino}
           </h2>
         </div>
@@ -90,23 +86,33 @@ export default function PasajeSaleCard({
 
         {/* Pills */}
         <div className="flex flex-wrap gap-3 mb-7">
-          {pills?.map((pill, index) => (
-            <div
-              key={index}
-              className="bg-[#F3F3F3] border border-[#DEDEDE] px-5 py-[13px] rounded-full text-[#0A3149] text-[14px] font-semibold leading-none"
-            >
-              {pill}
-            </div>
-          ))}
+          {pills?.map((pill, index) => {
+
+            const styles = [
+              'bg-[#052F49] text-white border-[#052F49]',
+              'bg-[#D9CC3A] text-[#052F49] border-[#D9CC3A]',
+              'bg-[#22B8B5] text-[#052F49] border-[#22B8B5]',
+              'bg-[#ECEEF3] text-[#052F49] border-[#ECEEF3]',
+            ]
+
+            return (
+              <div
+                key={index}
+                className={`px-5 py-[13px] rounded-full text-[13px] font-semibold leading-none border uppercase tracking-[0.03em] ${styles[index % 4]}`}
+              >
+                {pill}
+              </div>
+            )
+          })}
         </div>
 
         {/* CTA */}
         <Link
           href={whatsapp}
           target="_blank"
-          className="mt-auto bg-[#052F49] hover:bg-[#063854] transition-all duration-300 text-white text-center py-4 rounded-full text-[18px] font-semibold leading-none"
+          className="mt-auto bg-[#052F49] hover:bg-[#063854] hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 text-white text-center py-4 rounded-full text-[18px] font-semibold leading-none"
         >
-          Quiero este paquete
+          Quiero este pasaje
         </Link>
 
       </div>

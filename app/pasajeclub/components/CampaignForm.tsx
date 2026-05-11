@@ -7,7 +7,7 @@ import PasajeSaleCard from '@/app/pasaje-sale/components/PasajeSaleCard'
 type InitialData = {
   id?: string
   destino?: string
-  headline?: string
+  salida?: string
   descripcion?: string
   badge?: string
   promo_badge?: string
@@ -70,8 +70,8 @@ export default function CampaignForm({
 
   const [destino, setDestino] = useState(initialData?.destino || '')
 
-  const [headline, setHeadline] = useState(
-    initialData?.headline || ''
+  const [salida, setSalida] = useState(
+    initialData?.salida || ''
   )
 
   const [descripcion, setDescripcion] = useState(
@@ -147,7 +147,7 @@ export default function CampaignForm({
 
       const payload = {
         destino,
-        headline,
+        salida,
         descripcion,
         badge,
         promo_badge: promoBadge,
@@ -177,7 +177,7 @@ export default function CampaignForm({
       alert(isEdit ? 'Oferta actualizada 🚀' : 'Oferta creada 🚀')
 
       setDestino('')
-      setHeadline('')
+      setSalida('')
       setDescripcion('')
       setBadge('')
       setPromoBadge('')
@@ -226,10 +226,10 @@ export default function CampaignForm({
           />
 
           <Input
-            label="Headline"
-            value={headline}
-            onChange={(e) => setHeadline(e.target.value)}
-            placeholder="Ej: Hoteles Iberostar en la Isla Feliz"
+            label="Salida"
+            value={salida}
+            onChange={(e) => setSalida(e.target.value)}
+            placeholder="Ej: Córdoba"
           />
 
           <Input
@@ -385,7 +385,7 @@ export default function CampaignForm({
 
         <PasajeSaleCard
           destino={destino || 'ARUBA'}
-          headline={headline || 'Hoteles Iberostar en la Isla Feliz'}
+          salida={salida || 'Córdoba'}
           descripcion={
             descripcion ||
             'Todo incluido + pasajes + traslados + alojamiento'

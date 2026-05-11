@@ -71,7 +71,7 @@ export default function PasajeSalePage() {
             <PasajeSaleCard
               key={item.id}
               destino={item.destino}
-              headline={item.headline}
+              salida={item.salida}
               descripcion={item.descripcion}
               badge={item.badge}
               promoBadge={item.promo_badge}
