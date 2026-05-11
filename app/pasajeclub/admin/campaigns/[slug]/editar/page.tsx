@@ -2,7 +2,20 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import {
+  DndContext,
+  closestCenter,
+  DragEndEvent,
+} from '@dnd-kit/core'
+
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  arrayMove,
+} from '@dnd-kit/sortable'
+
 import { supabase } from '@/lib/supabase'
+import SortableCard from '@/app/pasaje-sale/components/SortableCard'
 
 interface SaleCard {
   id: string
@@ -22,6 +35,70 @@ export default function CampaignEditPage({
   const [cards, setCards] = useState<SaleCard[]>([])
   const [loading, setLoading] = useState(true)
 
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event
+
+    if (!over || active.id === over.id) return
+
+    const oldIndex = cards.findIndex(
+      (item) => item.id === active.id
+    )
+
+    const newIndex = cards.findIndex(
+      (item) => item.id === over.id
+    )
+
+    const previousCards = cards
+
+    const reorderedCards = arrayMove(cards, oldIndex, newIndex)
+
+    setCards(reorderedCards)
+
+    try {
+      const updates = reorderedCards.map((card, index) => {
+        return supabase
+          .from('sale_cards')
+          .update({ orden: index + 1 })
+          .eq('id', card.id)
+      })
+
+      await Promise.all(updates)
+    } catch (error) {
+      console.error('Error updating order:', error)
+
+      setCards(previousCards)
+
+      alert('No se pudo actualizar el orden')
+    }
+  }
+
+  const handleDelete = async (id: string) => {
+    const confirmed = window.confirm(
+      '¿Eliminar esta oferta?'
+    )
+
+    if (!confirmed) return
+
+    const previousCards = cards
+
+    setCards((items) =>
+      items.filter((item) => item.id !== id)
+    )
+
+    const { error } = await supabase
+      .from('sale_cards')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      console.error(error)
+
+      setCards(previousCards)
+
+      alert('No se pudo eliminar la oferta')
+    }
+  }
+
   useEffect(() => {
     const fetchCards = async () => {
       const { slug } = await params
@@ -30,8 +107,9 @@ export default function CampaignEditPage({
         .from('sale_cards')
         .select('*')
         .eq('campaign', slug)
-        .order('created_at', {
-          ascending: false,
+        .order('orden', {
+          ascending: true,
+          nullsFirst: false,
         })
 
       if (error) {
@@ -68,71 +146,31 @@ export default function CampaignEditPage({
           </p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <DndContext
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
 
-          {cards.map((card) => (
-            <div
-              key={card.id}
-              className="bg-white border border-[#E8E8E5] rounded-3xl px-5 py-4 shadow-sm flex items-center justify-between gap-6"
-            >
+          <SortableContext
+            items={cards.map((card) => card.id)}
+            strategy={verticalListSortingStrategy}
+          >
 
-              <div className="flex items-center gap-5 min-w-0 flex-1">
+            <div className="space-y-4">
 
-                <div className="relative w-[110px] h-[80px] rounded-2xl overflow-hidden shrink-0 bg-gray-100">
-                  <img
-                    src={card.imagen}
-                    alt={card.titulo}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                <div className="min-w-0">
-
-                  <div className="flex items-center gap-3 mb-1 flex-wrap">
-                    <h2 className="text-[#0A3149] text-[22px] font-bold leading-none truncate">
-                      {card.titulo}
-                    </h2>
-
-                    <span className="bg-[#052F49] text-white text-[11px] px-3 py-1 rounded-full font-semibold uppercase tracking-wide">
-                      {card.badge}
-                    </span>
-                  </div>
-
-                  <p className="text-[#66737D] text-sm">
-                    {card.moneda} {card.precio}
-                  </p>
-
-                </div>
-
-              </div>
-
-              <div className="flex items-center gap-3 shrink-0">
-
-                <Link
-                  href={`/pasajeclub/admin/campaigns/pasaje-sale/editar/${card.id}`}
-                  className="bg-[#052F49] hover:bg-[#063854] text-white px-5 py-3 rounded-full font-semibold transition-all"
-                >
-                  Editar
-                </Link>
-
-                <button
-                  className="bg-[#F3F5F7] hover:bg-[#E9EDF0] text-[#0A3149] px-5 py-3 rounded-full font-semibold transition-all"
-                >
-                  Duplicar
-                </button>
-
-                <button
-                  className="bg-red-500 hover:bg-red-600 text-white px-5 py-3 rounded-full font-semibold transition-all"
-                >
-                  Eliminar
-                </button>
-
-              </div>
+              {cards.map((card) => (
+              <SortableCard
+                key={card.id}
+                card={card}
+                onDelete={handleDelete}
+              />
+              ))}
 
             </div>
-          ))}
 
-        </div>
+          </SortableContext>
+
+        </DndContext>
       )}
 
     </div>
