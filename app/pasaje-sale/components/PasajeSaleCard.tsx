@@ -67,12 +67,12 @@ export default function PasajeSaleCard({
         {/* Ciudad + Promo */}
         <div className="flex items-center justify-between gap-4 mb-5">
 
-          <p className="text-[#0A3149] text-[17px] font-semibold tracking-[-0.03em]">
+          <p className="text-[#0A3149] text-[17px] font-semibold leading-[1.1] tracking-[-0.03em]">
             {salida}
           </p>
 
           {promoBadge && (
-            <div className="bg-[#F2C230] text-[#052F49] text-[12px] font-bold px-5 py-[11px] rounded-full whitespace-nowrap leading-none uppercase tracking-[0.03em] shadow-sm">
+            <div className="bg-[#dbcb3a] text-[#052F49] text-[12px] font-bold px-5 py-[11px] rounded-full whitespace-nowrap leading-none uppercase tracking-[0.03em] shadow-sm">
               {promoBadge}
             </div>
           )}
@@ -97,8 +97,8 @@ export default function PasajeSaleCard({
 
             const styles = [
               'bg-[#052F49] text-white border-[#052F49]',
-              'bg-[#D9CC3A] text-[#052F49] border-[#D9CC3A]',
-              'bg-[#22B8B5] text-[#052F49] border-[#22B8B5]',
+              'bg-[#dbcb3a] text-[#052F49] border-[#D9CC3A]',
+              'bg-[#11bcb3] text-[#FFFFFF] border-[#22B8B5]',
               'bg-[#ECEEF3] text-[#052F49] border-[#ECEEF3]',
             ]
 
