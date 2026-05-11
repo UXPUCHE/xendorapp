@@ -55,8 +55,8 @@ export default function WhatsAppTool() {
       })
 
     if (error) {
-      console.error(error)
-      alert('Error al generar link corto')
+      console.log(error)
+      alert(JSON.stringify(error))
       return
     }
 
