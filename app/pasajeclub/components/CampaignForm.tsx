@@ -188,7 +188,11 @@ export default function CampaignForm({
 
       if (error) {
         console.error(error)
-        alert(isEdit ? 'Error al actualizar oferta' : 'Error al crear oferta')
+
+        alert(
+          JSON.stringify(error, null, 2)
+        )
+
         return
       }
 
