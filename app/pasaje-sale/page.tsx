@@ -59,7 +59,7 @@ export default function PasajeSalePage() {
         {/* Header */}
         <div className="mb-16 flex flex-col items-center text-center">
 
-          <h1 className="text-[#072E40] text-3xl md:text-5xl font-bold max-w-3xl leading-[0.95] tracking-[-0.04em]">
+          <h1 className="text-[#072E40] text-3xl md:text-4xl font-bold max-w-3xl leading-[0.95] tracking-[-0.04em]">
             Ofertas exclusivas para viajar este 2026
           </h1>
 
