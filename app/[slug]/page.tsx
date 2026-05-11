@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { redirect } from 'next/navigation'
+import { permanentRedirect } from 'next/navigation'
 
 export default async function Page({
   params,
@@ -26,5 +26,5 @@ export default async function Page({
     )
   }
 
-  redirect(data.url)
+  permanentRedirect(data.url)
 }
