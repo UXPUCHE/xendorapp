@@ -1,16 +1,16 @@
 import { createClient } from '@supabase/supabase-js'
 import { redirect } from 'next/navigation'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
-
 export default async function Page({
   params,
 }: {
   params: { slug: string }
 }) {
+
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 
   const { data } = await supabase
     .from('short_links')
