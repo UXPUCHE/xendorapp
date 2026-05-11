@@ -78,6 +78,9 @@ export default function PasajeSalePage() {
               imagen={item.imagen}
               whatsapp={item.whatsapp}
               pills={item.pills || []}
+              precio={item.precio}
+              moneda={item.moneda}
+              precioDetalle={item.precio_detalle}
             />
           ))}
         </div>
