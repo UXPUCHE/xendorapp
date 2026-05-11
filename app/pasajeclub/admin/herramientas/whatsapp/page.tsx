@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { supabase } from '@/lib/supabase'
 
 export default function WhatsAppTool() {
   const [numero, setNumero] = useState('')
@@ -12,7 +13,7 @@ export default function WhatsAppTool() {
   const [mensaje, setMensaje] = useState('')
   const [link, setLink] = useState('')
 
-    const generar = () => {
+    const generar = async () => {
     let texto = ''
 
     if (custom.trim()) {
@@ -39,10 +40,28 @@ export default function WhatsAppTool() {
     const cleanNumber = numero.replace(/\D/g, '')
 
     const url = cleanNumber
-        ? `https://wa.me/${cleanNumber}?text=${encoded}`
-        : `https://wa.me/?text=${encoded}`
+      ? `https://wa.me/${cleanNumber}?text=${encoded}`
+      : `https://wa.me/?text=${encoded}`
 
-    setLink(url)
+    // 🔥 GENERAR SLUG RANDOM
+    const slug = Math.random().toString(36).substring(2, 10)
+
+    // 🔥 GUARDAR LINK EN SUPABASE
+    const { error } = await supabase
+      .from('short_links')
+      .insert({
+        slug,
+        url,
+      })
+
+    if (error) {
+      console.error(error)
+      alert('Error al generar link corto')
+      return
+    }
+
+    // 🔥 DEVOLVER SHORT LINK
+    setLink(`https://xendor.com.ar/${slug}`)
     }
     
   return (
