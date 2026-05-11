@@ -85,7 +85,7 @@ export default function PasajeSaleCard({
         </p>
 
         {/* Pills */}
-        <div className="flex flex-wrap gap-3 mb-7">
+        <div className="grid grid-cols-4 gap-3 mb-7">
           {pills?.map((pill, index) => {
 
             const styles = [
@@ -98,7 +98,7 @@ export default function PasajeSaleCard({
             return (
               <div
                 key={index}
-                className={`px-5 py-[13px] rounded-full text-[13px] font-semibold leading-none border uppercase tracking-[0.03em] ${styles[index % 4]}`}
+                className={`px-4 py-[13px] rounded-full text-[13px] font-semibold leading-none border text-center whitespace-nowrap ${styles[index % 4]}`}
               >
                 {pill}
               </div>
