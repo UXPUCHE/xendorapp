@@ -161,6 +161,9 @@ export default function CampaignForm({
       setLoading(true)
 
       const payload = {
+        titulo: destino,
+        subtitulo: descripcion,
+
         destino,
         salida,
         descripcion,
@@ -460,7 +463,7 @@ export default function CampaignForm({
 
         <PasajeSaleCard
           destino={destino || 'ARUBA'}
-          salida={salida || 'Córdoba'}
+          salida={salida || ''}
           descripcion={
             descripcion ||
             'Todo incluido + pasajes + traslados + alojamiento'
