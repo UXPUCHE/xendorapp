@@ -32,10 +32,10 @@ export default function PasajeSaleCard({
   precioDetalle,
 }: Props) {
   return (
-    <div className="bg-[#F7F7F5] rounded-[30px] overflow-hidden shadow-[0_10px_35px_rgba(0,0,0,0.06)] flex flex-col h-full border border-[#E8E8E5]">
+    <div className="bg-[#F7F7F5] rounded-[24px] overflow-hidden shadow-[0_10px_35px_rgba(0,0,0,0.06)] flex flex-col h-full border border-[#E8E8E5]">
 
       {/* Imagen */}
-      <div className="relative h-[260px] overflow-hidden rounded-t-[30px]">
+      <div className="relative h-[260px] overflow-hidden rounded-t-[24px]">
 
         <div
           className="absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-105"
