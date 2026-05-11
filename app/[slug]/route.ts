@@ -3,10 +3,10 @@ import { NextResponse } from 'next/server'
 
 export async function GET(
   request: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
 
-  const { slug } = params
+  const { slug } = await params
 
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -25,5 +25,5 @@ export async function GET(
     })
   }
 
-  return Response.redirect(data.url, 302)
+  return NextResponse.redirect(new URL(data.url))
 }
