@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import PasajeSaleCard from '@/app/pasaje-sale/components/PasajeSaleCard'
 
@@ -70,6 +71,7 @@ export default function CampaignForm({
   initialData,
   isEdit,
 }: Props) {
+  const router = useRouter()
 
   const [destino, setDestino] = useState(initialData?.destino || '')
 
@@ -200,24 +202,9 @@ export default function CampaignForm({
       }
 
       alert(isEdit ? 'Oferta actualizada 🚀' : 'Oferta creada 🚀')
-
-      setDestino('')
-      setSalida('')
-      setDescripcion('')
-      setBadge('')
-      setPromoBadge('')
-      setImagen('')
-
-      setPills([
-        'All Inclusive',
-        'Pasajes',
-        'Traslados',
-        'Alojamiento',
-      ])
-
-      setPrecio('')
-      setMoneda('USD')
-      setPrecioDetalle('Por persona en base doble')
+      router.push(
+        `/pasajeclub/admin/campaigns/${slug}/editar`
+      )
 
     } catch (err) {
       console.error(err)

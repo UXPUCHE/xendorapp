@@ -49,8 +49,9 @@ export default function SortableCard({
         bg-white border border-[#E8E8E5]
         rounded-3xl px-5 py-4 shadow-sm
         flex items-center justify-between gap-6
-        transition-transform duration-200 ease-out
-        ${isDragging ? 'opacity-90 shadow-2xl scale-[0.995] rotate-[0.2deg]' : ''}
+        transition-all duration-200 ease-out
+        hover:border-[#D7DEE3] hover:shadow-lg
+        ${isDragging ? 'opacity-95 shadow-2xl scale-[0.995] rotate-[0.2deg] border-[#22B8B5]' : ''}
       `}
     >
 
@@ -59,7 +60,8 @@ export default function SortableCard({
         <button
           {...attributes}
           {...listeners}
-          className="text-[#94A3AF] cursor-grab active:cursor-grabbing text-[26px] leading-none select-none shrink-0"
+          title="Arrastrar para reordenar"
+          className="text-[#94A3AF] hover:text-[#0A3149] cursor-grab active:cursor-grabbing text-[26px] leading-none select-none shrink-0 transition-colors touch-action-none"
         >
           ☰
         </button>
@@ -92,25 +94,25 @@ export default function SortableCard({
 
       </div>
 
-      <div className="flex items-center gap-3 shrink-0">
+      <div className="flex items-center gap-2 shrink-0 ml-6 border-l border-[#E8E8E5] pl-6">
 
         <Link
           href={`/pasajeclub/admin/campaigns/pasaje-sale/editar/${card.id}`}
-          className="bg-[#052F49] hover:bg-[#063854] text-white px-5 py-3 rounded-full font-semibold transition-all"
+          className="bg-[#052F49] hover:bg-[#063854] hover:scale-[1.02] active:scale-[0.98] text-white px-5 py-3 rounded-full font-semibold transition-all"
         >
           Editar
         </Link>
 
         <Link
           href={`/pasajeclub/admin/campaigns/pasaje-sale/crear?duplicate=${card.id}`}
-          className="bg-[#F3F5F7] hover:bg-[#E9EDF0] text-[#0A3149] px-5 py-3 rounded-full font-semibold transition-all"
+          className="bg-[#F3F5F7] hover:bg-[#E9EDF0] hover:scale-[1.02] active:scale-[0.98] text-[#0A3149] px-5 py-3 rounded-full font-semibold transition-all"
         >
           Duplicar
         </Link>
 
         <button
           onClick={() => onDelete(card.id)}
-          className="bg-red-500 hover:bg-red-600 text-white px-5 py-3 rounded-full font-semibold transition-all"
+          className="bg-red-50 hover:bg-red-100 hover:scale-[1.02] active:scale-[0.98] text-red-600 border border-red-200 px-5 py-3 rounded-full font-semibold transition-all"
         >
           Eliminar
         </button>

@@ -1,6 +1,7 @@
 'use client'
 
 import { ReactNode } from 'react'
+import { Toaster } from 'sonner'
 import Sidebar from '@/app/pasajeclub/components/Sidebar'
 import AdminHeader from '@/app/pasajeclub/components/AdminHeader'
 
@@ -26,6 +27,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
       </div>
 
+      <Toaster
+        position="top-right"
+        richColors
+        closeButton
+      />
     </div>
   )
 }
