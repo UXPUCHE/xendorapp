@@ -138,7 +138,7 @@ export default function PasajeSaleCard({
           target="_blank"
           className="mt-auto bg-[#052F49] hover:bg-[#063854] hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 text-white text-center py-4 rounded-full text-[18px] font-semibold leading-none"
         >
-          Quiero este pasaje
+          Quiero más información
         </Link>
 
       </div>
